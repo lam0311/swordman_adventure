@@ -1,7 +1,7 @@
 #pragma once
 #include"commonFc.h"
-#include"enemy.h"
 #include"player.h"
+class enemy;
 class BULLET :public player {
 public:
 	int bullet_x;
@@ -21,6 +21,7 @@ public:
 	Uint32 time_hit_bullet;
 	Uint32 time_frame_bullet_special;
 	int frame_hit_bullet;
+	bool bomb_explore;
 
 
 	BULLET() {
@@ -39,6 +40,7 @@ public:
 		direction_y = 0;
 		bullet_special = false;
 		bullet_x_start = 0;
+		bomb_explore = false;
 
 
 	}

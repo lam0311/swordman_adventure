@@ -1,5 +1,6 @@
 #include"bullet.h"
 #include"commonFc.h"
+#include "enemy.h"
 bool BULLET::animation_bullet(SDL_Renderer* render) {
 	char path[50];
 	for (int i = 0; i < 4; i++) {

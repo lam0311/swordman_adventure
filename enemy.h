@@ -1,7 +1,7 @@
 #pragma once
 #include"commonFc.h"
 #include"player.h"
-
+#include"bullet.h"
 enum state_goblin {
 	STANDUP,
 	RUNLEFT,
@@ -41,8 +41,7 @@ public:
 	SDL_Texture* load_enemy(const char* path, SDL_Renderer* render);
 	
 	vector<pair<int, int>> picture_attack_left;
-
-
+	vector<BULLET> stack_bomb;
 	enemy();
 
 
@@ -64,6 +63,9 @@ public:
     void enemy_goblin_health( SDL_Renderer* render, camera& cam);
 	void sprite_enemy_goblin_idle_right(SDL_Renderer* render, camera cam);
 	void sprite_enemy_goblin_idle_left(SDL_Renderer* render, camera cam);
-
-
+	void loaded_bomb(player& p1);
+	void behavior_goblin(player& p1);
+	void update_bomb(const int tile_map[MAX_ROWS][MAX_COLS],player &p1);
+	bool check_map_bomb(const int tile_map[MAX_ROWS][MAX_COLS],BULLET bomb);
+	bool check_aim_player(SDL_Rect rect_bullet, SDL_Rect player);
 };

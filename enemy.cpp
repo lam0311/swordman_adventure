@@ -391,6 +391,80 @@ void enemy::followPlayer(player p1, const int tile_map[MAX_ROWS][MAX_COLS], stat
 }
 
 
+void enemy::loaded_bomb(player& p1) {
+    BULLET bomb;
+    bomb.bullet_x = enemy_x;
+    bomb.bullet_y = enemy_y;
+    bomb.x_val = (p1.player_x - enemy_x) / 50; 
+    bomb.y_val = -4; 
+    bomb.active_bullet = true;
+    stack_bomb.push_back(bomb);
+}
+
+void enemy::behavior_goblin(player& p1) {
+    int dx = abs(p1.player_x - enemy_x);
+    int dy = abs(p1.player_y - enemy_y);
+    if (dx <= 300 && SDL_GetTicks() - time_attak_bomb_start > cooldown_bomb) {
+        enemy_attack_bomb = true;
+        time_attak_bomb_start = SDL_GetTicks();
+
+        loaded_bomb(p1);
+    }
+}
+
+bool enemy::check_aim_player(SDL_Rect rect_bullet, SDL_Rect player) {
+    if (rect_bullet.x<player.x + player.w + 30 && rect_bullet.x + rect_bullet.w - 15>player.x && rect_bullet.y<player.y + player.h && rect_bullet.y + rect_bullet.h>player.y) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+bool enemy::check_map_bomb(const int tile_map[MAX_ROWS][MAX_COLS],BULLET bomb) {
+    int tile_x = bomb.bullet_x / tile_block;
+    int tile_y = bomb.bullet_y / tile_block;
+
+    if (tile_x >= 0 && tile_x < MAX_COLS && tile_y >= 0 && tile_y < MAX_ROWS) {
+        if (tile_map[tile_y][tile_x] != 0) { 
+            return true; 
+        }
+    }
+    return false;
+}
+
+
+void enemy:: update_bomb(const int tile_map[MAX_ROWS][MAX_COLS],player &p1) {
+    for (auto& bomb : stack_bomb) {
+        bomb.bullet_x += bomb.x_val; 
+        bomb.bullet_y += bomb.y_val; 
+        bomb.y_val += 0.2; 
+        SDL_Rect bullet_rect = { bomb.bullet_x, bomb.bullet_y , bomb.bullet_w , bomb.bullet_h };
+        SDL_Rect player_rect2 = { p1.player_x ,p1.player_y,p1.player_w , p1.player_h };
+        if (check_map_bomb(tile_map, bomb)) {
+            bomb.bomb_explore = true;
+            bomb.active_bullet = false;
+        }
+        else if (check_aim_player(bullet_rect, player_rect2)) {
+            bomb.bomb_explore = true;
+            bomb.active_bullet = false;
+            p1.player_heath -= 1;
+            p1.player_hit = true;
+            p1.player_hit_start = SDL_GetTicks();
+            
+        }
+
+    }
+   
+
+    for (int i = stack_bomb.size() - 1; i >= 0; i--) {
+        if (!stack_bomb[i].active_bullet) {
+            stack_bomb.erase(stack_bomb.begin() + i);
+        }
+    }
+}
+
+
 
 
 SDL_Texture* enemy::load_enemy(const char* path, SDL_Renderer* render) {
