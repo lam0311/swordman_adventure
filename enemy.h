@@ -6,7 +6,8 @@ enum state_goblin {
 	STANDUP,
 	RUNLEFT,
 	RUNRIGHT,
-	ATTACK_GOBLIN
+	ATTACK_GOBLIN,
+	ATTACK_BOMB
 };
 class enemy:public player {
 public:
@@ -27,6 +28,10 @@ public:
 	Uint32 goblin_frame_died;
 	bool kt_died_goblin;
 	int frame_died_goblin;
+	int frame_goblin_bomb;
+	int frame_bomb1;
+	int frame_bomb2;
+	bool is_attacking_bomb;
 	bool prep_attack;
 	bool enemy_hit_aim;
 	bool enemy_attack_bomb;
@@ -34,7 +39,9 @@ public:
 	int frame_goblin_idle;
 	Uint32 time_goblin_idle;
 	Uint32 time_attak_bomb_start;
-    int cooldown_bomb;
+	Uint32 frame_bomb_time;
+	Uint32 frame_bomb_time_explore;
+	Uint32  cooldown_bomb;
 
 
 	Uint32 attack_goblin_start;
@@ -60,12 +67,16 @@ public:
 	void sprite_enemy_goblin_hurt_right(int frame, SDL_Renderer* render, camera& cam);
 	void sprite_enemy_goblin_died_right(int frame, SDL_Renderer* render, camera& cam);
 	void sprite_enemy_goblin_died_left(int frame, SDL_Renderer* render, camera& cam);
-    void enemy_goblin_health( SDL_Renderer* render, camera& cam);
+	void sprite_enemy_goblin_attack_bomb_right(SDL_Renderer* render, camera& cam);
+	void sprite_enemy_goblin_attack_bomb_left(SDL_Renderer* render, camera& cam);
 	void sprite_enemy_goblin_idle_right(SDL_Renderer* render, camera cam);
 	void sprite_enemy_goblin_idle_left(SDL_Renderer* render, camera cam);
+	void sprite_bomb_right(SDL_Renderer* render, camera& cam,BULLET bomb);
+	void sprite_bomb_left(SDL_Renderer* render, camera& cam,BULLET bomb);
+	void enemy_goblin_health(SDL_Renderer* render, camera& cam);
 	void loaded_bomb(player& p1);
-	void behavior_goblin(player& p1);
 	void update_bomb(const int tile_map[MAX_ROWS][MAX_COLS],player &p1);
 	bool check_map_bomb(const int tile_map[MAX_ROWS][MAX_COLS],BULLET bomb);
 	bool check_aim_player(SDL_Rect rect_bullet, SDL_Rect player);
+	void render_bomb(SDL_Renderer* render,camera cam);
 };
