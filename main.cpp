@@ -580,8 +580,8 @@ int main(int argc, char* argv[]) {
                 enemy_g[i].update(mapArray);  
                 
                 if (!enemy_g[i].goblin_hit) {
-                    enemy_g[i].update_bomb(mapArray, p1);
-                    enemy_g[i].render_bomb(render, cam);
+                    enemy_g[i].update_bomb(mapArray, p1,cam);
+                    enemy_g[i].render_bomb(render, cam,p1);
                     if (goblin == STANDUP&&!enemy_g[i].enemy_attack_bomb) {
 
 						if (enemy_g[i].direc_goblin_left) enemy_g[i].sprite_enemy_goblin_idle_left(render, cam);
