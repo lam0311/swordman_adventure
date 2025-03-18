@@ -27,6 +27,7 @@ public:
 	void play_game_menu_sound();	
 	void play_game_start_sound();
 	void play_goblin_hit_sound();
+	void play_attack_apple_sound();
 	void play_goblin_died_sound();
 	void play_effect_apple_sound();
 	void stop_game_start_sound();

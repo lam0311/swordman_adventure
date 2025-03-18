@@ -1,6 +1,7 @@
 #pragma once
 #include"commonFc.h"
 #include"player.h"
+#include"sound.h"
 class enemy;
 class BULLET :public player {
 public:
@@ -59,7 +60,7 @@ public:
 	vector<BULLET> bullets;
 	void add_bullet(int x, int y, int direction);
 	void add_bullet_special(int x, int y, int direction);
-	void update_bullet(camera cam, vector<enemy> &enemy_g,player &p1 );
+	void update_bullet(camera cam, vector<enemy> &enemy_g,player &p1,sound_manager sound);
 	void bullets_attack(SDL_Renderer* render, player p1, camera cam);
 
 };

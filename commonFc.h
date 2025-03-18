@@ -80,6 +80,7 @@ static Mix_Music* sound_game_menu = NULL;
 static Mix_Music* sound_game_start = NULL;
 static Mix_Chunk* sound_goblin_hit = NULL;
 static Mix_Chunk* sound_goblin_died = NULL;
+static Mix_Chunk* sound_attack_apple = NULL;
 static Mix_Chunk* sound_effect_apple = NULL;
 
 

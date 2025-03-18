@@ -53,6 +53,8 @@ bool sound_manager::load_sound() {
 		return false;
 	}
 
+	sound_attack_apple = Mix_LoadWAV("music/sound_attack_apple.wav");
+
 
 	return true;
 }
@@ -64,7 +66,9 @@ void sound_manager::play_attack_sound() {
 void sound_manager::play_hit_sound() {
 	Mix_PlayChannel(2, sound_player_hit, 0);
 }
-
+void sound_manager::play_attack_apple_sound() {
+	Mix_PlayChannel(5, sound_attack_apple, 0);
+}
 void sound_manager::play_game_menu_sound() {
 
 	if (!check_sound_game_menu) {

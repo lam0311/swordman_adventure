@@ -176,6 +176,7 @@ void resetgame() {
 		bigmonster.boss_bullets[i].active_bullet = false;
 	}
 
+
     for (int i = 0; i < 37; i++) {
         enemy_g[i].enemy_x = 600 + 700 * i;
         enemy_g[i].enemy_y = 40;
@@ -184,6 +185,7 @@ void resetgame() {
         enemy_g[i].kt_died_goblin = false;
         enemy_g[i].goblin_hit = false;
         enemy_g[i].frame_died_goblin = 0;
+        enemy_g[i].stack_bomb.clear();
     }
     for (int i = 37; i < 60; i++) {
         enemy_g[i].enemy_x = 600 + 800 * (i - 37);
@@ -193,6 +195,7 @@ void resetgame() {
         enemy_g[i].kt_died_goblin = false;
         enemy_g[i].goblin_hit = false;
         enemy_g[i].frame_died_goblin = 0;
+        enemy_g[i].stack_bomb.clear();
     }
     cam.resetcam();
 }
@@ -318,7 +321,7 @@ int main(int argc, char* argv[]) {
                     isAttack = true;
                     attackStart = SDL_GetTicks();
                     goblin_hit_yes = true;
-
+                    sound.play_attack_apple_sound();
 
                     int check_direc = 0;
                     if (direcleft) {
@@ -545,7 +548,10 @@ int main(int argc, char* argv[]) {
 
 
                 if (enemy_g[i].goblin_hit) {
-
+                    enemy_g[i].enemy_attack_bomb = false;
+                    if (enemy_g[i].frame_goblin_bomb < 12) {
+                        enemy_g[i].stack_bomb.clear();
+                    }
                     if (enemy_g[i].direc_goblin_left) {
                         enemy_g[i].sprite_enemy_goblin_hurt_left(frame_hit, render, cam);
                     }
@@ -683,7 +689,7 @@ int main(int argc, char* argv[]) {
 
             // ten
             bullets_sword.bullets_attack(render, p1, cam);
-            bullets_sword.update_bullet(cam, enemy_g,p1);
+            bullets_sword.update_bullet(cam, enemy_g,p1,sound);
             bullets_sword.bullet_gun_hit(render, cam, enemy_g);
 
 			

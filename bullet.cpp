@@ -162,7 +162,7 @@ void bullet_manager::add_bullet_special(int x, int y, int direction) {
 	bullets.push_back(temp);
 }
 
-void bullet_manager::update_bullet(camera cam, vector<enemy> &enemy_g,player &p1) {
+void bullet_manager::update_bullet(camera cam, vector<enemy> &enemy_g,player &p1,sound_manager sound) {
 
 	for (int i = bullets.size() - 1; i >= 0; i--) {
 		bullets[i].update_bullet(cam);
@@ -177,6 +177,7 @@ void bullet_manager::update_bullet(camera cam, vector<enemy> &enemy_g,player &p1
 				enemy.enemy_hit_aim = true;
 				enemy.goblin_hit = true;
 				enemy.goblin_heath -= 1;
+				sound.play_goblin_hit_sound();
 				enemy.hit_time = SDL_GetTicks();
 				bullets[i].active_bullet = false; 
 				if (enemy.goblin_heath <= 0) {

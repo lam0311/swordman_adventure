@@ -350,7 +350,8 @@ void enemy::sprite_enemy_goblin_attack_bomb_right(SDL_Renderer* render, camera& 
         frame_bomb2 = 8;
     }
 
-    if (frame_goblin_bomb >= 12) {
+
+    if (frame_goblin_bomb >= 12 && !goblin_hit) {
         bomb_thrown = false;
         enemy_attack_bomb = false;
         loaded_bomb(p1);
@@ -373,7 +374,9 @@ void enemy::sprite_enemy_goblin_attack_bomb_left(SDL_Renderer* render, camera& c
         frame_bomb2 = 8;
     }
 
-    if (frame_goblin_bomb >= 12) {
+
+
+    if (frame_goblin_bomb >= 12&& !goblin_hit) {
         bomb_thrown = false;
         enemy_attack_bomb = false;
         loaded_bomb(p1);
@@ -467,7 +470,7 @@ void enemy::followPlayer(player p1, const int tile_map[MAX_ROWS][MAX_COLS], stat
     if (foot_x1 >= 0 && foot_x2 < MAX_COLS && foot_y < MAX_ROWS) {
 
         int dx = abs(p1.player_x - enemy_x);
-        if (dx <= 400 && SDL_GetTicks() - time_attak_bomb_start > cooldown_bomb && dx >= 350&&!bomb_thrown) {
+        if (dx <= 500 && SDL_GetTicks() - time_attak_bomb_start > cooldown_bomb && dx >= 350&&!bomb_thrown&&!goblin_hit) {
             enemy_attack_bomb = true;
             time_attak_bomb_start = SDL_GetTicks();
             frame_goblin_bomb = 0;
@@ -542,20 +545,19 @@ void enemy::loaded_bomb(player& p1) {
     bomb.bullet_x = enemy_x;
     bomb.bullet_y = enemy_y;
     bomb.x_val = (p1.player_x - enemy_x) / 50; 
-    bomb.y_val = -4; 
+    bomb.y_val = -5; 
     bomb.active_bullet = true;
     stack_bomb.push_back(bomb);
 }
 
 
 bool enemy::check_aim_player(SDL_Rect rect_bullet, SDL_Rect player) {
-    if (rect_bullet.x<player.x + player.w + 30 && rect_bullet.x + rect_bullet.w - 15>player.x && rect_bullet.y<player.y + player.h && rect_bullet.y + rect_bullet.h>player.y) {
-        return true;
-    }
-    else {
-        return false;
-    }
+    return (rect_bullet.x < player.x + player.w &&     
+        rect_bullet.x + rect_bullet.w > player.x &&
+        rect_bullet.y < player.y + player.h &&     
+        rect_bullet.y + rect_bullet.h > player.y);  
 }
+
 
 bool enemy::check_map_bomb(const int tile_map[MAX_ROWS][MAX_COLS],BULLET bomb) {
     int tile_x = bomb.bullet_x / tile_block;
@@ -577,12 +579,12 @@ void enemy:: update_bomb(const int tile_map[MAX_ROWS][MAX_COLS],player &p1,camer
             bomb.bullet_y += bomb.y_val;
             bomb.y_val += 0.2;
         }
-        SDL_Rect bullet_rect = { bomb.bullet_x-10, bomb.bullet_y-60 , bomb.bullet_w-78 , bomb.bullet_h-78 };
+        SDL_Rect bullet_rect = { bomb.bullet_x-10, bomb.bullet_y , bomb.bullet_w-78 , bomb.bullet_h-78 };
         SDL_Rect player_rect2 = { p1.player_x ,p1.player_y,p1.player_w , p1.player_h };
         if (check_map_bomb(tile_map, bomb)) {
             bomb.bomb_explore = true;
         }
-        else if (check_aim_player(bullet_rect, player_rect2)) {
+        else if (check_aim_player(bullet_rect, player_rect2)&&!p1.charging) {
             bomb.bomb_explore = true;
             if (!p1.player_hit) {  
                 p1.player_heath -= 1;
@@ -610,8 +612,12 @@ void enemy::render_bomb(SDL_Renderer* render,camera cam,player p1) {
             sprite_enemy_goblin_attack_bomb_left(render, cam,p1);
         }
     }
-  
+   /* SDL_Rect player_rect2 = { p1.player_x-cam.camera_x ,p1.player_y - cam.camera_y ,p1.player_w, p1.player_h };
+    SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
+    SDL_RenderFillRect(render, &player_rect2);*/
         for (auto& bomb : stack_bomb) {
+            /*SDL_Rect bullet_rect = { bomb.bullet_x - 10-cam.camera_x, bomb.bullet_y  -cam.camera_y, bomb.bullet_w - 78 , bomb.bullet_h - 78 };
+            SDL_RenderFillRect(render, &bullet_rect);*/
             if (bomb.x_val < 0) {
                 sprite_bomb_left(render, cam, bomb);
             }
