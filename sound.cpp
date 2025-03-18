@@ -54,6 +54,25 @@ bool sound_manager::load_sound() {
 	}
 
 	sound_attack_apple = Mix_LoadWAV("music/sound_attack_apple.wav");
+	if (!sound_attack_apple) {
+		cout << Mix_GetError();
+		return false;
+	}
+	sound_attack_hit_apple = Mix_LoadWAV("music/snowball-throw-hit_7-278174.wav");
+	if (!sound_attack_hit_apple) {
+		cout << Mix_GetError();
+		return false;
+	}
+	sound_run_player = Mix_LoadWAV("music/running-sounds-6003.wav");
+	if (!sound_run_player) {
+		cout << Mix_GetError();
+		return false;
+	}
+	sound_game_over = Mix_LoadWAV("music/negative_beeps-6008.wav");
+	if (!sound_game_over) {
+		cout << Mix_GetError();
+		return false;
+	}
 
 
 	return true;
@@ -63,11 +82,20 @@ void sound_manager::play_attack_sound() {
 	Mix_PlayChannel(1, sound_player_attack, 0);
 }
 
+void sound_manager::play_attack_apple_hit_sound() {
+	Mix_PlayChannel(6, sound_attack_hit_apple, 0);
+}
+
+void sound_manager::play_game_over_sound() {
+	Mix_PlayChannel(8, sound_game_over, 0);
+}
+
 void sound_manager::play_hit_sound() {
 	Mix_PlayChannel(2, sound_player_hit, 0);
 }
 void sound_manager::play_attack_apple_sound() {
 	Mix_PlayChannel(5, sound_attack_apple, 0);
+	Mix_VolumeChunk(sound_goblin_hit, 80);
 }
 void sound_manager::play_game_menu_sound() {
 
@@ -79,7 +107,20 @@ void sound_manager::play_game_menu_sound() {
 	}
 	
 }
+void sound_manager::play_run_player_sound() {
+	if (!is_playing_run_sound) { 
+		Mix_PlayChannel(7, sound_run_player, -1);  
+		is_playing_run_sound = true;
+		Mix_VolumeChunk(sound_run_player, 70);
+	}
+}
 
+void sound_manager::stop_run_sound() {
+	if (is_playing_run_sound) {
+		Mix_HaltChannel(7);
+		is_playing_run_sound = false;
+	}
+}
 
 void sound_manager::play_game_start_sound() {
 	if (!check_sound_game_start) {
@@ -94,6 +135,7 @@ void sound_manager::play_game_start_sound() {
 
 void sound_manager::play_goblin_hit_sound() {
 	Mix_PlayChannel(3, sound_goblin_hit, 0);
+	Mix_VolumeChunk(sound_goblin_hit, 50);
 }
 
 void sound_manager::play_goblin_died_sound() {

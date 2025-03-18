@@ -344,17 +344,18 @@ void enemy::sprite_enemy_goblin_attack_bomb_right(SDL_Renderer* render, camera& 
         frame_bomb_time = SDL_GetTicks();
     }
 
-    if (frame_goblin_bomb == 11) {
+    if (frame_goblin_bomb == 11 && !bomb_thrown) {
         is_attacking_bomb = true;
         frame_bomb1 = 0;
         frame_bomb2 = 8;
+        bomb_thrown = true; 
+        loaded_bomb(p1);  
     }
 
 
-    if (frame_goblin_bomb >= 12 && !goblin_hit) {
-        bomb_thrown = false;
+    if (frame_goblin_bomb >= 12) { 
         enemy_attack_bomb = false;
-        loaded_bomb(p1);
+        bomb_thrown = false;  
         frame_goblin_bomb = 0;
     }
     SDL_Rect rect_picture = { 150*frame_goblin_bomb,0,150,150 };
@@ -368,18 +369,19 @@ void enemy::sprite_enemy_goblin_attack_bomb_left(SDL_Renderer* render, camera& c
         frame_bomb_time = SDL_GetTicks();
     }
 
-    if (frame_goblin_bomb == 11) {
+    if (frame_goblin_bomb == 11 && !bomb_thrown) {
         is_attacking_bomb = true;
         frame_bomb1 = 0;
         frame_bomb2 = 8;
+        bomb_thrown = true;  
+        loaded_bomb(p1); 
     }
 
 
 
-    if (frame_goblin_bomb >= 12&& !goblin_hit) {
-        bomb_thrown = false;
+    if (frame_goblin_bomb >= 12) {  
         enemy_attack_bomb = false;
-        loaded_bomb(p1);
+        bomb_thrown = false;  
         frame_goblin_bomb = 0;
     }
     SDL_Rect rect_picture = { 150*(11-frame_goblin_bomb),0,150,150};
@@ -470,11 +472,10 @@ void enemy::followPlayer(player p1, const int tile_map[MAX_ROWS][MAX_COLS], stat
     if (foot_x1 >= 0 && foot_x2 < MAX_COLS && foot_y < MAX_ROWS) {
 
         int dx = abs(p1.player_x - enemy_x);
-        if (dx <= 500 && SDL_GetTicks() - time_attak_bomb_start > cooldown_bomb && dx >= 350&&!bomb_thrown&&!goblin_hit) {
+        if (dx <= 500 && SDL_GetTicks() - time_attak_bomb_start > cooldown_bomb && dx >= 350&&!goblin_hit) {
             enemy_attack_bomb = true;
             time_attak_bomb_start = SDL_GetTicks();
             frame_goblin_bomb = 0;
-            bomb_thrown = true;
             goblin = ATTACK_BOMB;
             if (enemy_x < p1.player_x) {
                 direc_goblin_right = true;
@@ -487,6 +488,11 @@ void enemy::followPlayer(player p1, const int tile_map[MAX_ROWS][MAX_COLS], stat
             enemy_x_val = 0;
             enemy_y_val = 0;
         }
+
+        if (goblin_hit && enemy_attack_bomb) {
+            enemy_attack_bomb = false; 
+        }
+
 
         if (!enemy_attack_bomb) {
             if (tile_map[foot_y][foot_x1] != 0 || tile_map[foot_y][foot_x2] != 0) {
@@ -547,7 +553,9 @@ void enemy::loaded_bomb(player& p1) {
     bomb.x_val = (p1.player_x - enemy_x) / 50; 
     bomb.y_val = -5; 
     bomb.active_bullet = true;
-    stack_bomb.push_back(bomb);
+    if (!goblin_hit) {
+        stack_bomb.push_back(bomb);
+    }
 }
 
 
@@ -597,7 +605,7 @@ void enemy:: update_bomb(const int tile_map[MAX_ROWS][MAX_COLS],player &p1,camer
    
 
     for (int i = stack_bomb.size() - 1; i >= 0; i--) {
-        if (!stack_bomb[i].active_bullet) {
+        if (stack_bomb[i].bomb_explore && !stack_bomb[i].active_bullet) {
             stack_bomb.erase(stack_bomb.begin() + i);
         }
     }
@@ -612,19 +620,15 @@ void enemy::render_bomb(SDL_Renderer* render,camera cam,player p1) {
             sprite_enemy_goblin_attack_bomb_left(render, cam,p1);
         }
     }
-   /* SDL_Rect player_rect2 = { p1.player_x-cam.camera_x ,p1.player_y - cam.camera_y ,p1.player_w, p1.player_h };
-    SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
-    SDL_RenderFillRect(render, &player_rect2);*/
-        for (auto& bomb : stack_bomb) {
-            /*SDL_Rect bullet_rect = { bomb.bullet_x - 10-cam.camera_x, bomb.bullet_y  -cam.camera_y, bomb.bullet_w - 78 , bomb.bullet_h - 78 };
-            SDL_RenderFillRect(render, &bullet_rect);*/
-            if (bomb.x_val < 0) {
-                sprite_bomb_left(render, cam, bomb);
-            }
-            else {
-                sprite_bomb_right(render, cam, bomb);
-            }
+ 
+    for (auto& bomb : stack_bomb) {
+        if (bomb.x_val < 0) {
+            sprite_bomb_left(render, cam, bomb);
         }
+        else {
+            sprite_bomb_right(render, cam, bomb);
+        }
+    }
 }
 
 

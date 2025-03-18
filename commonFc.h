@@ -82,6 +82,9 @@ static Mix_Chunk* sound_goblin_hit = NULL;
 static Mix_Chunk* sound_goblin_died = NULL;
 static Mix_Chunk* sound_attack_apple = NULL;
 static Mix_Chunk* sound_effect_apple = NULL;
+static Mix_Chunk* sound_attack_hit_apple = NULL;
+static Mix_Chunk* sound_run_player = NULL;
+static Mix_Chunk* sound_game_over = NULL;
 
 
 // bien hang
@@ -95,7 +98,7 @@ const int tile_block = 64;
 const int MAX_ROWS = 12;
 const int MAX_COLS = 460;
 
-const int PLAYER_START_X = 15;
+const int PLAYER_START_X = 16000;
 const int PLAYER_START_Y = 15;
 const int PLAYER_MAX_HEALTH = 12;
 

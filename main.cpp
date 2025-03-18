@@ -86,14 +86,24 @@ bool stylemap() {
 
 
 void move_(int framerun,camera cam,SDL_Renderer* render,player &p1,bool left,bool right,bool direcleft,bool direcright,bool isattack,attack at,int framattack) {
-	if (right) {
+
+
+    if ((right || left)&& p1.on_ground) {
+        sound.play_run_player_sound();
+    }
+    else {
+        sound.stop_run_sound();
+    }
+
+
+    if (right) {
         if (p1.on_ground) {
             p1.aminationrunright(framerun, render, cam);
         }
         else {
             p1.aminationrunright(10, render, cam);
         }
-	}
+    }
 
     else if (left) {
         if (p1.on_ground) {
@@ -104,16 +114,15 @@ void move_(int framerun,camera cam,SDL_Renderer* render,player &p1,bool left,boo
         }
     }
 
-    else if(isattack)  {
-        if (direcright) {
-            at.aminationattackright(framattack, render, cam,p1);
-        }
-        else if (direcleft) {
-            at.aminationattackleft(framattack, render, cam,p1);
-        }
-    }
-
-    else if (p1.player_hit) {
+     else if (isattack) {
+         if (direcright) {
+             at.aminationattackright(framattack, render, cam, p1);
+         }
+         else if (direcleft) {
+             at.aminationattackleft(framattack, render, cam, p1);
+         }
+     }
+     else if (p1.player_hit) {
         if (direcright) {
             at.amination_hit_right(p1.player_frame_hit, render, cam, p1);
         }
@@ -121,15 +130,15 @@ void move_(int framerun,camera cam,SDL_Renderer* render,player &p1,bool left,boo
             at.amination_hit_left(p1.player_frame_hit, render, cam, p1);
         }
     }
-    else if (p1.charging) {
-		if (direcright) {
-			p1.using_attack_special_right(render, cam);
-		}
-		else if (direcleft) {
-			p1.using_attack_special_left(render, cam);
-		}
+     else if (p1.charging) {
+        if (direcright) {
+            p1.using_attack_special_right(render, cam);
+        }
+        else if (direcleft) {
+            p1.using_attack_special_left(render, cam);
+        }
     }
-    else if (p1.using_special) {
+     else if (p1.using_special) {
         if (direcright) {
             p1.using_attack_special_right(render, cam);
         }
@@ -138,17 +147,17 @@ void move_(int framerun,camera cam,SDL_Renderer* render,player &p1,bool left,boo
         }
     }
 
-	else {
-		if (direcright) {
+     else {
+        if (direcright) {
             p1.render_player_idle_right(render, cam);
-		}
-		else if (direcleft) {
-			p1.render_player_idle_left(render, cam);
-		}
-        else {
-			p1.render_player_idle_right(render, cam);   
         }
-	}
+        else if (direcleft) {
+            p1.render_player_idle_left(render, cam);
+        }
+        else {
+            p1.render_player_idle_right(render, cam);
+        }
+    }
 }
 
 
@@ -548,10 +557,6 @@ int main(int argc, char* argv[]) {
 
 
                 if (enemy_g[i].goblin_hit) {
-                    enemy_g[i].enemy_attack_bomb = false;
-                    if (enemy_g[i].frame_goblin_bomb < 12) {
-                        enemy_g[i].stack_bomb.clear();
-                    }
                     if (enemy_g[i].direc_goblin_left) {
                         enemy_g[i].sprite_enemy_goblin_hurt_left(frame_hit, render, cam);
                     }
@@ -584,10 +589,9 @@ int main(int argc, char* argv[]) {
 
                 enemy_g[i].followPlayer(p1, mapArray, goblin, frame_goblin_run, render, cam);
                 enemy_g[i].update(mapArray);  
-                
+                enemy_g[i].update_bomb(mapArray, p1, cam);
+                enemy_g[i].render_bomb(render, cam, p1);
                 if (!enemy_g[i].goblin_hit) {
-                    enemy_g[i].update_bomb(mapArray, p1,cam);
-                    enemy_g[i].render_bomb(render, cam,p1);
                     if (goblin == STANDUP&&!enemy_g[i].enemy_attack_bomb) {
 
 						if (enemy_g[i].direc_goblin_left) enemy_g[i].sprite_enemy_goblin_idle_left(render, cam);
@@ -679,6 +683,7 @@ int main(int argc, char* argv[]) {
             if (p1.player_heath <= 0) {
                 p1.player_died_time = SDL_GetTicks();
                 status.GO = GAME_OVER;
+                sound.play_game_over_sound();
             }
 
 

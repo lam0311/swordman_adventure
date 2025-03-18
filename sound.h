@@ -11,6 +11,7 @@ public:
 	bool check_sound_goblin_hit;
 	bool check_sound_goblin_died;
 	bool check_sound_effect_apple;
+	bool is_playing_run_sound;
 	sound_manager() {
 		check_sound_player_attack = false;
 		check_sound_player_hit = false;
@@ -19,6 +20,7 @@ public:
 		check_sound_goblin_hit = false;
 		check_sound_goblin_died = false;
 		check_sound_effect_apple = false;
+		is_playing_run_sound = false;
 	}
 
 	bool load_sound();
@@ -30,8 +32,12 @@ public:
 	void play_attack_apple_sound();
 	void play_goblin_died_sound();
 	void play_effect_apple_sound();
+	void play_attack_apple_hit_sound();
+	void play_run_player_sound();
+	void play_game_over_sound();
 	void stop_game_start_sound();
 	void stop_game_menu_sound();
+	void stop_run_sound();
 
 
 
