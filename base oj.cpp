@@ -8,11 +8,9 @@ base::base() {
 	base_oj = NULL;
 }
 
-
 base::~base() {
 	free();
 }
-
 
 bool base::loadimg(const char* path, SDL_Renderer* render,int w,int h) {
 	SDL_Texture* newpicture = NULL;
@@ -54,11 +52,7 @@ bool base::loadimg(const char* path, SDL_Renderer* render,int w,int h) {
 
 }
 
-
-
 void base::positionimg(SDL_Renderer* render,int set) {
-	/*SDL_Rect rectps = { rect.x,rect.y,rect.w,rect.h };
-	SDL_RenderCopy(render, base_oj, clip, &rectps);*/
 	
 		SDL_Rect rec1 = { set,0,window_w,window_h };
 		SDL_RenderCopy(render, base_oj, NULL, &rec1);
@@ -67,7 +61,6 @@ void base::positionimg(SDL_Renderer* render,int set) {
 			SDL_RenderCopy(render, base_oj, NULL, &rec2);
 		}
 }
-
 
 void base::free() {
 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include<iostream>
 #include<string>
 #include<vector>
@@ -98,8 +98,10 @@ const int tile_block = 64;
 const int MAX_ROWS = 12;
 const int MAX_COLS = 460;
 
+// biến hằng tính chất nhân vật 
 const int PLAYER_START_X = 16000;
 const int PLAYER_START_Y = 15;
 const int PLAYER_MAX_HEALTH = 12;
-
+const int PLAYER_WEIGHT = 70;
+const int PLAYER_HEIGHT = 63;
 

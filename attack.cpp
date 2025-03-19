@@ -44,14 +44,11 @@ bool attack::loadattack(SDL_Renderer* render) {
 
 }
 
-
 void attack::aminationattackright(int fame, SDL_Renderer* render, camera cam, player x) {
     SDL_Rect rect;
     rect = { x.player_x - cam.camera_x,x.player_y - cam.camera_y ,picture_[fame].first,picture_[fame].second };
     SDL_RenderCopy(render, sprite_attackright[fame], NULL, &rect);
 }
-
-
 void attack::aminationattackleft(int fame, SDL_Renderer* render, camera cam, player x) {
     SDL_Rect rect;
     int m;
@@ -63,16 +60,10 @@ void attack::aminationattackleft(int fame, SDL_Renderer* render, camera cam, pla
   
     SDL_RenderCopy(render, sprite_attackleft[fame], NULL, &rect);
 }
-
-
-
 void attack::amination_hit_right(int fame, SDL_Renderer* render, camera cam, player x) {
     SDL_Rect rect = { x.player_x - cam.camera_x,x.player_y - cam.camera_y ,player_w,player_h };
     SDL_RenderCopy(render, sprite_hit_right[fame], NULL, &rect);
 }
-
-
-
 void attack::amination_hit_left(int fame, SDL_Renderer* render, camera cam, player x) {
     SDL_Rect rect = { x.player_x - cam.camera_x,x.player_y - cam.camera_y ,player_w,player_h};
     SDL_RenderCopy(render, sprite_hit_left[fame], NULL, &rect);

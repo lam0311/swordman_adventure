@@ -1,27 +1,36 @@
-#pragma once
+﻿#pragma once
 #include"commonFc.h"
 struct camera;
 struct player {
+// tính chất nhân vật===============
 	int player_x;
 	int player_y;
 	int player_w;
 	int player_h;
+	int player_heath;
+	int tileX;
+	int tileY;
+	float y_val;
 	int x_val;
-	int tileX; 
-	int tileY; 
+
+// biến kĩ năng đặc biệt============ 
 	int energy;
 	int max_energy;
 	int picture_w;
 	int picture_h;
-	int player_heath;
-	int player_frame_hit;
+
+// biến chạy frame=================
 	int frame_effect_apple;
 	int frame_player_idle;
 	int frame_special_attack;
 	int frame_special_attack1;
 	int frame_special_attack2;
 	int frame_special_attack3;
-	float y_val;
+	int player_frame_hit;
+	int charge_frame;
+	int special_attack_frame;
+	
+// biến kiểm tra tình chất nhân vật=====
 	bool on_ground;
 	bool attack_corec;
 	bool player_hit;
@@ -29,8 +38,8 @@ struct player {
 	bool can_use_special;
 	bool using_special;
 	bool charging;
-	int charge_frame;
-	int special_attack_frame;
+
+// biến thời gian điều chỉnh tốc độ======
 	Uint32 player_hit_start;
 	Uint32 time_apple;
 	Uint32 player_died_time;
@@ -41,45 +50,7 @@ struct player {
     Uint32 charge_time ; 
 	Uint32 charge_time_frame;
 
-	player() {
-		player_x = PLAYER_START_X;
-		player_y = PLAYER_START_Y;
-		player_heath = PLAYER_MAX_HEALTH;
-		player_w = 70;
-		player_h = 63;
-		picture_w = 0;
-		picture_h = 0;
-		x_val = 0;
-		y_val = 0;
-		player_hit_start = 0;
-		player_frame_hit = 0;
-	    frame_effect_apple = 0;
-		time_apple = 0;
-		player_died_time = 0;
-		frame_player_idle = 0;
-		time_player_idle = 0;
-		energy = 0;
-		max_energy = 10;
-		charge_start = 0;
-		charge_time = 3000;
-		last_special_attack = 0;
-		frame_special_attack = 0;
-		frame_special_attack1 = 0;
-		frame_special_attack2 = 0;
-		frame_special_attack3 = 0;
-		charge_frame = 0;
-		charge_time_frame = 0;
-		on_ground = false;
-		attack_corec = false;
-		player_hit = false;
-		player_died = false;
-		can_use_special = false;
-		using_special = false;
-		charging = false;
-	}
 	
-
-
 
 	void checkvar(const int tile_map[MAX_ROWS][MAX_COLS]);
 	void updateTilePosition() {
@@ -87,14 +58,7 @@ struct player {
 		tileY = player_y / tile_block;
 	}
 
-
-
-
 	void box(SDL_Renderer* render,camera cam);
-
-
-
-
 	SDL_Texture* Loadsprite(const char* path,SDL_Renderer* render);
 	
 	bool spriterun(SDL_Renderer* render);
@@ -104,12 +68,11 @@ struct player {
 	void Effect_apple2_player(SDL_Renderer* render, camera cam);
 	void render_player_idle_right(SDL_Renderer* render, camera cam);
 	void render_player_idle_left(SDL_Renderer* render, camera cam);
-	void recharge(int index_energy);
+	void recharge(int index_energy); void jump();
 	void sprite_special_attack_behind(SDL_Renderer* render, camera cam);
 	void sprite_special_attack_front(SDL_Renderer* render, camera cam);
 	void using_attack_special_left(SDL_Renderer* render, camera cam);
 	void using_attack_special_right(SDL_Renderer* render, camera cam);
-	void jump();
 
 };
 

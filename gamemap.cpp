@@ -1,7 +1,6 @@
 #include"commonFc.h"
 #include"map.h"
 #include"player.h"
-
 int num_rows = 0; 
 
 void map:: readfile() {
@@ -42,7 +41,6 @@ bool map:: loadTile(SDL_Renderer* render, const char* path,int i) {
 	SDL_FreeSurface(surface);
 	return true;
 }
-
 
 void map:: rendermap(SDL_Renderer* render, camera cam) {
 	int startX = cam.camera_x / tile_block;

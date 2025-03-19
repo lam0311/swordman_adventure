@@ -2,23 +2,53 @@
 #include"commonFc.h"
 #include"map.h"
 using namespace std;
+
+player::player() {
+    player_x = PLAYER_START_X;
+    player_y = PLAYER_START_Y;
+    player_w = PLAYER_WEIGHT;
+    player_h = PLAYER_HEIGHT;
+    player_heath = PLAYER_MAX_HEALTH;
+    picture_w = 0; picture_h = 0;
+    x_val = 0;  y_val = 0;
+    player_hit_start = 0;
+    player_frame_hit = 0;
+    frame_effect_apple = 0;
+    time_apple = 0;
+    player_died_time = 0;
+    frame_player_idle = 0;
+    time_player_idle = 0;
+      last_special_attack = 0;
+     frame_special_attack = 0;
+    frame_special_attack1 = 0;
+    frame_special_attack2 = 0;
+    frame_special_attack3 = 0;
+    charge_time = 3000;
+    energy = 0; max_energy = 10;
+    charge_start = 0;
+    charge_frame = 0;
+    charge_time_frame = 0;
+    on_ground = false;
+    attack_corec = false;
+    player_hit = false;
+    player_died = false;
+    can_use_special = false;
+    using_special = false;
+    charging = false;
+}
+
 void player::box(SDL_Renderer* render,camera cam){
 	SDL_Rect rect = { player_x-cam.camera_x,player_y-cam.camera_y,50,50 };
 	SDL_RenderFillRect(render, &rect);
 }
-
-
 void player::aminationrunright(int frame, SDL_Renderer* render, camera cam) {
 	SDL_Rect rect = { player_x - cam.camera_x,player_y - cam.camera_y,player_w,player_h };
 	SDL_RenderCopy(render, sprite_runright[frame], NULL, &rect);
 }
-
 void player::aminationrunleft(int frame, SDL_Renderer* render, camera cam) {
 	SDL_Rect rect = { player_x - cam.camera_x,player_y - cam.camera_y,player_w,player_h };
 	SDL_RenderCopy(render, sprite_runleft[frame], NULL, &rect);
 }
-
-
 void player::Effect_apple_player(SDL_Renderer* render, camera cam) {
     Uint32 curent = SDL_GetTicks();
     if (curent - time_apple >= 100) {
@@ -31,8 +61,6 @@ void player::Effect_apple_player(SDL_Renderer* render, camera cam) {
     SDL_RenderCopy(render, effect_apple[frame_effect_apple], NULL, &rect);
 
 }
-
-
 void player::Effect_apple2_player(SDL_Renderer* render, camera cam) {
     Uint32 curent = SDL_GetTicks();
     if (curent - time_apple >= 100) {
@@ -47,7 +75,6 @@ void player::Effect_apple2_player(SDL_Renderer* render, camera cam) {
 
 
 }
-
 void player::render_player_idle_left(SDL_Renderer* render, camera cam) {
 	Uint32 curent = SDL_GetTicks();
 	if (curent - time_player_idle >= 100) {
@@ -58,7 +85,6 @@ void player::render_player_idle_left(SDL_Renderer* render, camera cam) {
 	SDL_Rect rect = { player_x - cam.camera_x,player_y - cam.camera_y,player_w+5,player_h+5 };
 	SDL_RenderCopy(render, idle_left, &rec2, &rect);
 }
-
 void player::render_player_idle_right(SDL_Renderer* render, camera cam) {
     Uint32 curent = SDL_GetTicks();
     if (curent - time_player_idle >= 100) {
@@ -70,7 +96,6 @@ void player::render_player_idle_right(SDL_Renderer* render, camera cam) {
     SDL_Rect rect = { player_x - cam.camera_x,player_y - cam.camera_y,player_w+5,player_h+5 };
     SDL_RenderCopy(render, idle_right, &rec2, &rect);
 }
-
 
 
 SDL_Texture* player:: Loadsprite(const char* path,SDL_Renderer* render) {
@@ -97,11 +122,6 @@ SDL_Texture* player:: Loadsprite(const char* path,SDL_Renderer* render) {
 	}
 	return sprite;
 }
-
-
-
-
-
 bool player::spriterun(SDL_Renderer* render) {
 	char path[50];
 	for (int i = 0; i < 17; i++) {
@@ -196,32 +216,6 @@ bool player::spriterun(SDL_Renderer* render) {
 
 
 
-
-
-
-
-
-void camera::updateCamera(player x) {
-	
-	camera_x = x.player_x - (camera_w / 2);
-
-	camera_y = x.player_y - camera_h / 2;
-	
-	if (camera_x < 0) {	camera_x = 0;	}
-
-	if (camera_y < 0) { camera_y = 0; }
-
-	if (camera_x > MAX_COLS * tile_block - camera_w) {
-		camera_x = MAX_COLS * tile_block - camera_w;
-	}
-
-	if (camera_y > MAX_ROWS * tile_block - camera_h) {
-		camera_y = MAX_ROWS * tile_block - camera_h;
-	}
-}
-
-
-
 void player::checkvar(const int tile_map[MAX_ROWS][MAX_COLS]) {
     int min_h = min(player_h, tile_block);
     int min_w = min(player_w, tile_block);
@@ -296,14 +290,12 @@ void player::checkvar(const int tile_map[MAX_ROWS][MAX_COLS]) {
         SDL_Delay(250);
     }
 }
-
 void player::jump() {
     if (on_ground) {
         y_val = -9;
         on_ground = false;
     }
 }
-
 void player::recharge(int index_energy) {
 	energy += index_energy;
 	if (energy >= max_energy) {
@@ -311,8 +303,6 @@ void player::recharge(int index_energy) {
 		can_use_special = true;
 	}
 }
-
-
 void player::sprite_special_attack_behind(SDL_Renderer* render, camera cam) {
 	if (can_use_special) {
 		Uint32 current_time = SDL_GetTicks();
@@ -346,7 +336,6 @@ void player::sprite_special_attack_behind(SDL_Renderer* render, camera cam) {
 
 	}
 }
-
 void player::sprite_special_attack_front(SDL_Renderer* render, camera cam) {
     if (can_use_special) {
         Uint32 current_time = SDL_GetTicks();
@@ -365,8 +354,6 @@ void player::sprite_special_attack_front(SDL_Renderer* render, camera cam) {
 
     }
 }
-
-
 void player::using_attack_special_right(SDL_Renderer* render, camera cam) {
 	if (charging) {
 		Uint32 current_time = SDL_GetTicks();
@@ -395,7 +382,6 @@ void player::using_attack_special_right(SDL_Renderer* render, camera cam) {
 		}
     }
 }
-
 void player::using_attack_special_left(SDL_Renderer* render, camera cam) {
 	if (charging) {
 		Uint32 current_time = SDL_GetTicks();
@@ -435,15 +421,12 @@ void camera::resetcam() {
     camera_x = 0;
     camera_y = 0;
 }
-
-
 void camera::start_shake(int shake_, Uint32 duration) {
 	is_shaking = true;
 	shake = shake_;
 	shake_start_time = SDL_GetTicks();
 	shake_duration = duration;
 }
-
 void camera::update_shake(){
     if (is_shaking) {
         Uint32 current_time = SDL_GetTicks();
@@ -458,15 +441,29 @@ void camera::update_shake(){
 
     }
 }
+void camera::updateCamera(player x) {
 
+    camera_x = x.player_x - (camera_w / 2);
 
+    camera_y = x.player_y - camera_h / 2;
+
+    if (camera_x < 0) { camera_x = 0; }
+
+    if (camera_y < 0) { camera_y = 0; }
+
+    if (camera_x > MAX_COLS * tile_block - camera_w) {
+        camera_x = MAX_COLS * tile_block - camera_w;
+    }
+
+    if (camera_y > MAX_ROWS * tile_block - camera_h) {
+        camera_y = MAX_ROWS * tile_block - camera_h;
+    }
+}
 void camera::start_slow_motion(Uint32 time_slow_motion) {
     is_slow_motion = true;
     slow_motion_time_start = SDL_GetTicks();
     slow_motion_time = time_slow_motion;
 }
-
-
 void camera::update_slow_motion() {
     if (is_slow_motion) {
         Uint32 current_time = SDL_GetTicks();
