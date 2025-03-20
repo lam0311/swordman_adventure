@@ -69,6 +69,11 @@ static SDL_Texture* shield_boss = NULL;
 
 // interface
 static SDL_Texture* button_start = NULL;
+static SDL_Texture* button_start2 = NULL;
+static SDL_Texture* button_help = NULL;
+static SDL_Texture* button_help2 = NULL;
+static SDL_Texture* button_exit = NULL;
+static SDL_Texture* button_exit2 = NULL;
 static SDL_Texture* decore_player_menu = NULL;
 static SDL_Texture* decore_player_menu1 = NULL;
 
@@ -101,7 +106,7 @@ const int MAX_ROWS = 12;
 const int MAX_COLS = 460;
 
 // biến hằng tính chất nhân vật 
-const int PLAYER_START_X = 15;
+const int PLAYER_START_X = 26000;
 const int PLAYER_START_Y = 15;
 const int PLAYER_MAX_HEALTH = 12;
 const int PLAYER_WEIGHT = 70;

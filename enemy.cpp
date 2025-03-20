@@ -573,7 +573,7 @@ void enemy:: update_bomb(const int tile_map[MAX_ROWS][MAX_COLS],player &p1,camer
         }
 
     }
-    if (SDL_GetTicks() - p1.player_hit_start > 200) {
+    if (SDL_GetTicks() - p1.player_hit_start > 250) {
         p1.check_player_hit_bomb = false;
     }
    

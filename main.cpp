@@ -175,7 +175,7 @@ void resetgame() {
     p1.player_died = false;
     p1.player_hit = false;
     p1.player_frame_hit = 0;
-    bigmonster.boss_health = 20;
+    bigmonster.boss_health = 3;
 	bigmonster.check_boss_died = false;
 	bigmonster.boss_hit = false;
 	bigmonster.atacking = false;
@@ -450,7 +450,7 @@ int main(int argc, char* argv[]) {
             sound.stop_game_start_sound();
             Uint32 currentime = SDL_GetTicks();
             if (currentime - p1.player_died_time > 1000) {
-                status.GAME_OVER(render, game_over_,inter.font);
+                status.GAME_OVER(render, game_over_, inter.font);
                 if (status.GO == START_AGAIN) {
                     resetgame();
                     status.GO = START;
@@ -463,7 +463,7 @@ int main(int argc, char* argv[]) {
 
         else if (status.GO == GAME_VICTORY) {
             sound.stop_game_start_sound();
-            status.GAME_VICTORY(render, inter.font);
+            status.GAME_VICTORY_(render, inter.font);
         }
 
         else if (status.GO == START) {
@@ -549,10 +549,10 @@ int main(int argc, char* argv[]) {
                         if (enemy_g[i].goblin_hit_yes) {
                             enemy_g[i].goblin_heath -= 1;
                             p1.recharge(1);
-                            enemy_g[i].goblin_hit_yes = false;
                         }
 
                     }
+                    enemy_g[i].goblin_hit_yes = false;
                 }
 
                 else if (isAttack && direcleft && enemy_g[i].enemy_x - p1.player_x > -80 && enemy_g[i].enemy_x - p1.player_x < 0 && abs(enemy_g[i].enemy_y - p1.player_y) < 40) {
@@ -563,9 +563,9 @@ int main(int argc, char* argv[]) {
                         if (enemy_g[i].goblin_hit_yes) {
                             enemy_g[i].goblin_heath -= 1;
                             p1.recharge(1);
-                            enemy_g[i].goblin_hit_yes = false;
                         }
                     }
+                    enemy_g[i].goblin_hit_yes = false;
                 }
                 enemy_g[i].enemy_goblin_health(render, cam);
 
@@ -602,7 +602,7 @@ int main(int argc, char* argv[]) {
                 }
 
 
-            
+
                 enemy_g[i].followPlayer(p1, mapArray, goblin, frame_goblin_run, render, cam);
                 enemy_g[i].update(mapArray);
                 enemy_g[i].update_bomb(mapArray, p1, cam, sound);
@@ -710,17 +710,17 @@ int main(int argc, char* argv[]) {
                 }
             }
 
-            inter.render_kill_count(render, status.kill_count,status.score);
+            inter.render_kill_count(render, status.kill_count, status.score);
 
 
             //boss
-            bigmonster.check_boss_hit_attack(bullets_sword, p1, cam, sound,status);
+            bigmonster.check_boss_hit_attack(bullets_sword, p1, cam, sound, status);
             bigmonster.boss_update(p1, cam);
             bigmonster.spawn_boss(render, cam);
 
             // ten
             bullets_sword.bullets_attack(render, p1, cam);
-            bullets_sword.update_bullet(cam, enemy_g, p1, sound,status);
+            bullets_sword.update_bullet(cam, enemy_g, p1, sound, status);
             bullets_sword.bullet_gun_hit(render, cam, enemy_g);
 
 

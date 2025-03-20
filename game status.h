@@ -60,5 +60,5 @@ public:
 
     void GAME_OVER(SDL_Renderer* render, base game_over, TTF_Font* font);
     void GAME_MENU(SDL_Renderer* render, base game_menu);
-    void GAME_VICTORY(SDL_Renderer* render, TTF_Font* font);
+    void GAME_VICTORY_(SDL_Renderer* render, TTF_Font* font);
 };
