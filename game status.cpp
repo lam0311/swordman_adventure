@@ -44,6 +44,31 @@ void status_game::GAME_OVER(SDL_Renderer* render, base game_over) {
     SDL_RenderPresent(render);
 }
 
+void status_game::GAME_VICTORY(SDL_Renderer* render) {
+	SDL_Event e;
+	std::cout << "Enter pressed! Returning to MENU...\n";
+	while (SDL_PollEvent(&e)!=0) {
+		if (e.type == SDL_QUIT) {
+			GO = QUIT;
+		}
+		if (e.type == SDL_KEYDOWN) {
+			if (e.key.keysym.sym == SDLK_RETURN) {
+				resetgame(); 
+				GO = MENU;
+				return; 
+			}
+		}
+	}
+	SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
+	SDL_RenderClear(render); 
+
+	SDL_Texture* victory_texture = load_("picture/background_victory.png",render);
+	SDL_RenderCopy(render, victory_texture, NULL, NULL);
+
+
+	SDL_RenderPresent(render);
+}
+
 void status_game::render_decore_menu(SDL_Renderer* render) {
 	Uint32 current_time = SDL_GetTicks();
 	if (current_time - time_menu_player > 100) {
@@ -76,12 +101,6 @@ void status_game::GAME_MENU(SDL_Renderer* render, base game_menu) {
 		mouse_y = 0;
 		GO = START;
     }
-    
-    
-    
-    
-    
-    
     
     SDL_RenderPresent(render);
 

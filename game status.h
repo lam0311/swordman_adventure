@@ -1,12 +1,15 @@
 #pragma once
 #include"commonFc.h"
 #include"base oj.h"
+void resetgame();
 enum GAME {
     START,
     MENU,
     HELP,
     START_AGAIN,
-	GAME_OVER
+	GAME_OVER,
+    GAME_VICTORY,
+    QUIT
 };
 class status_game {
 public:
@@ -50,4 +53,5 @@ public:
 
     void GAME_OVER(SDL_Renderer* render, base game_over);
     void GAME_MENU(SDL_Renderer* render, base game_menu);
+    void GAME_VICTORY(SDL_Renderer* render);
 };

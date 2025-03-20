@@ -87,14 +87,12 @@ bool stylemap() {
 
 void move_(int framerun,camera cam,SDL_Renderer* render,player &p1,bool left,bool right,bool direcleft,bool direcright,bool isattack,attack at,int framattack) {
 
-
     if ((right || left)&& p1.on_ground) {
         sound.play_run_player_sound();
     }
     else {
         sound.stop_run_sound();
     }
-
 
     if (right) {
         if (p1.on_ground) {
@@ -173,7 +171,7 @@ void resetgame() {
     p1.player_died = false;
     p1.player_hit = false;
     p1.player_frame_hit = 0;
-    bigmonster.boss_health = 20;
+    bigmonster.boss_health = 3;
 	bigmonster.check_boss_died = false;
 	bigmonster.boss_hit = false;
 	bigmonster.atacking = false;
@@ -267,7 +265,7 @@ int main(int argc, char* argv[]) {
 
     if (!setup() || !setbackground() || !stylemap() || !p1.spriterun(render) || !at.loadattack(render) || !enemy.amination_enemy_goblin(render)
         || !inter.blood_index(render) || !sword_.animation_bullet(render) || !bigmonster.load_inmage_boss(render) || !status.load_button(render)
-        || !sound.load_sound()) {
+        || !sound.load_sound_all ()) {
         cout << SDL_GetError();
         return 1;
     }
@@ -446,9 +444,12 @@ int main(int argc, char* argv[]) {
 				if (status.GO == MENU) {
 					resetgame();
 				}
-
             }
+        }
 
+        else if (status.GO == GAME_VICTORY) {
+                sound.stop_game_start_sound();
+                status.GAME_VICTORY(render);
         }
 
         else if (status.GO == START) {
@@ -589,7 +590,7 @@ int main(int argc, char* argv[]) {
 
                 enemy_g[i].followPlayer(p1, mapArray, goblin, frame_goblin_run, render, cam);
                 enemy_g[i].update(mapArray);  
-                enemy_g[i].update_bomb(mapArray, p1, cam);
+                enemy_g[i].update_bomb(mapArray, p1, cam,sound);
                 enemy_g[i].render_bomb(render, cam, p1);
                 if (!enemy_g[i].goblin_hit) {
                     if (goblin == STANDUP&&!enemy_g[i].enemy_attack_bomb) {
@@ -684,6 +685,14 @@ int main(int argc, char* argv[]) {
                 p1.player_died_time = SDL_GetTicks();
                 status.GO = GAME_OVER;
                 sound.play_game_over_sound();
+            }
+
+            if (bigmonster.check_boss_died) {
+                Uint32 time = SDL_GetTicks() - bigmonster.victory_start_time;
+                sound.play_game_victory_sound();
+                if (time > 3000) {
+                    status.GO = GAME_VICTORY;
+                }
             }
 
 

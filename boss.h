@@ -23,10 +23,12 @@ public:
 	int frame_boss_hit;
 	int frame_boss_shield;
 	int hit_count;
+
 	bool atacking;
 	bool check_boss_died;
 	bool boss_hit;
 	bool is_defending;
+
 	Uint32 last_frame_boss;
 	Uint32 last_hit_boss;
 	Uint32 last_shot_time;
@@ -38,7 +40,7 @@ public:
 	Uint32 defense_start_time;
 	Uint32 defense_duration;
 	Uint32 time_frame_shiled;
-
+	Uint32 victory_start_time;
 	vector<BULLET> boss_bullets;
 	int level_bullet;
 
@@ -68,6 +70,7 @@ public:
 		defense_duration = 0;
 		time_frame_shiled = 0;
 		frame_boss_shield = 0;
+		victory_start_time = 0;
 		check_boss_died = false;
 		boss_hit = false;
 		atacking = false;

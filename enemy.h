@@ -76,7 +76,7 @@ public:
 	void sprite_bomb_left(SDL_Renderer* render, camera& cam,BULLET &bomb);
 	void enemy_goblin_health(SDL_Renderer* render, camera& cam);
 	void loaded_bomb(player& p1);
-	void update_bomb(const int tile_map[MAX_ROWS][MAX_COLS],player &p1,camera cam);
+	void update_bomb(const int tile_map[MAX_ROWS][MAX_COLS],player &p1,camera cam,sound_manager sound);
 	bool check_map_bomb(const int tile_map[MAX_ROWS][MAX_COLS],BULLET bomb);
 	bool check_aim_player(SDL_Rect rect_bullet, SDL_Rect player);
 	void render_bomb(SDL_Renderer* render,camera cam, player p1);

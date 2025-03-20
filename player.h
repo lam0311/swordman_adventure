@@ -50,7 +50,7 @@ struct player {
     Uint32 charge_time ; 
 	Uint32 charge_time_frame;
 
-	
+	player();
 
 	void checkvar(const int tile_map[MAX_ROWS][MAX_COLS]);
 	void updateTilePosition() {
@@ -89,9 +89,12 @@ struct camera {
 	int camera_y;
 	int camera_w;
 	int camera_h;
+	
 	int shake;
+	
 	bool is_shaking;
 	bool is_slow_motion;
+	
 	Uint32 shake_start_time ;
 	Uint32 shake_duration ; 
 	Uint32 slow_motion_time_start;
@@ -102,13 +105,15 @@ struct camera {
 		camera_y = 0;
 		camera_w = window_w;
 		camera_h = window_h;
-		is_shaking = false;
-		is_slow_motion = false;
 		shake = 0;
+		
 		shake_start_time = 0;
 		shake_duration = 0;
 		slow_motion_time = 0;
 		slow_motion_time_start = 0;
+		
+		is_shaking = false;
+		is_slow_motion = false;
 	}
 	
 

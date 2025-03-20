@@ -151,6 +151,7 @@ void BOSS::check_boss_hit_attack(bullet_manager& bullets_sword,player &p1,camera
 				boss_health -= 3;
 			}
 			else {
+				p1.recharge(1);
 				boss_health -= 1;
 			}
 			boss_hit = true;
@@ -159,7 +160,8 @@ void BOSS::check_boss_hit_attack(bullet_manager& bullets_sword,player &p1,camera
 			bullet.active_bullet = false;
 			if (boss_health <= 0) {
 				check_boss_died = true;
-				cam.start_slow_motion(500);
+				cam.start_slow_motion(1000);
+				victory_start_time = SDL_GetTicks();
 			}
 		}
 

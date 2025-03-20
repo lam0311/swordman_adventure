@@ -1,81 +1,46 @@
 #include"sound.h"
-bool sound_manager::load_sound() {
+
+bool sound_manager::loadSound(Mix_Chunk*& sound, const std::string& path) {
+	sound = Mix_LoadWAV(path.c_str());
+	if (!sound) {
+		cout << Mix_GetError();
+		return false;
+	}
+	return true;
+}
+
+bool sound_manager::loadMusic(Mix_Music*& music, const std::string& path) {
+	music = Mix_LoadMUS(path.c_str());
+	if (!music) {
+		cout << Mix_GetError();
+		return false;
+	}
+	return true;
+}
+
+bool sound_manager::load_sound_all() {
 
 	SDL_setenv("SDL_AUDIODRIVER", "directsound", 1);
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) < 0) {
 		cout << Mix_GetError();
 		return false;
 	}
-	
-
 	Mix_AllocateChannels(16);
 	
-	sound_player_attack = Mix_LoadWAV("music/sword_sound.wav");
-	if (sound_player_attack == NULL) {
-		cout << Mix_GetError();
-		return false;
-	}
-	sound_player_hit = Mix_LoadWAV("music/player_hurt.wav");
-	if (sound_player_hit == NULL) {
-		cout << Mix_GetError();
-		return false;
-	}
 
-	sound_game_menu = Mix_LoadMUS("music/nhac_nen_gamestart.wav");
-	if (sound_game_menu == NULL) {
-		cout << Mix_GetError();
-		return false;
-	}
-
-
-	sound_game_start = Mix_LoadMUS("music/nhac_nen_choi.wav");
-	if (sound_game_start == NULL) {
-		cout << Mix_GetError();
-		return false;
-	}
-
-
-	sound_goblin_hit = Mix_LoadWAV("music/goblin_hit.wav");
-	if (sound_goblin_hit == NULL) {
-		cout << Mix_GetError();
-		return false;
-	}
-
-	sound_goblin_died = Mix_LoadWAV("music/goblin_death.wav");
-	if (sound_goblin_died == NULL) {
-		cout << Mix_GetError();
-		return false;
-	}
-
-	sound_effect_apple = Mix_LoadWAV("music/sound_effect_apple.wav");
-	if (sound_effect_apple == NULL) {
-		cout << Mix_GetError();
-		return false;
-	}
-
-	sound_attack_apple = Mix_LoadWAV("music/sound_attack_apple.wav");
-	if (!sound_attack_apple) {
-		cout << Mix_GetError();
-		return false;
-	}
-	sound_attack_hit_apple = Mix_LoadWAV("music/snowball-throw-hit_7-278174.wav");
-	if (!sound_attack_hit_apple) {
-		cout << Mix_GetError();
-		return false;
-	}
-	sound_run_player = Mix_LoadWAV("music/running-sounds-6003.wav");
-	if (!sound_run_player) {
-		cout << Mix_GetError();
-		return false;
-	}
-	sound_game_over = Mix_LoadWAV("music/negative_beeps-6008.wav");
-	if (!sound_game_over) {
-		cout << Mix_GetError();
-		return false;
-	}
-
-
-	return true;
+	return loadSound(sound_player_attack, "music/sword_sound.wav") &&
+		loadSound(sound_player_hit, "music/player_hurt.wav") &&
+		loadMusic(sound_game_menu, "music/nhac_nen_gamestart.wav") &&
+		loadMusic(sound_game_start, "music/nhac_nen_choi.wav") &&
+		loadSound(sound_goblin_hit, "music/goblin_hit.wav") &&
+		loadSound(sound_goblin_died, "music/goblin_death.wav") &&
+		loadSound(sound_effect_apple, "music/sound_effect_apple.wav") &&
+		loadSound(sound_attack_apple, "music/sound_attack_apple.wav") &&
+		loadSound(sound_attack_hit_apple, "music/snowball-throw-hit_7-278174.wav") &&
+		loadSound(sound_run_player, "music/running-sounds-6003.wav") &&
+		loadSound(sound_game_over, "music/negative_beeps-6008.wav") &&
+		loadSound(sound_explosion, "music/explosion-312361.wav") &&
+		loadSound(sound_game_victory, "music/success-fanfare-trumpets-6185.wav");
 }
 
 void sound_manager::play_attack_sound() {
@@ -93,10 +58,16 @@ void sound_manager::play_game_over_sound() {
 void sound_manager::play_hit_sound() {
 	Mix_PlayChannel(2, sound_player_hit, 0);
 }
+
+void sound_manager::play_goblin_bomb_explosion() {
+	Mix_PlayChannel(9, sound_explosion, 0);
+}
+
 void sound_manager::play_attack_apple_sound() {
 	Mix_PlayChannel(5, sound_attack_apple, 0);
 	Mix_VolumeChunk(sound_goblin_hit, 80);
 }
+
 void sound_manager::play_game_menu_sound() {
 
 	if (!check_sound_game_menu) {
@@ -107,6 +78,11 @@ void sound_manager::play_game_menu_sound() {
 	}
 	
 }
+
+void sound_manager::play_game_victory_sound() {
+	Mix_PlayChannel(9, sound_game_victory, 0);
+}
+
 void sound_manager::play_run_player_sound() {
 	if (!is_playing_run_sound) { 
 		Mix_PlayChannel(7, sound_run_player, -1);  
@@ -164,10 +140,29 @@ void sound_manager::stop_game_menu_sound() {
 
 
 
+
 void sound_manager::close_sound() {
-	Mix_FreeChunk(sound_player_attack);
-	Mix_FreeChunk(sound_player_hit);
-	Mix_FreeMusic(sound_game_start);
-	Mix_FreeMusic(sound_game_menu);
+
+	Mix_Chunk* soundEffects[] = {
+		sound_player_attack, sound_player_hit, sound_goblin_hit, sound_goblin_died,
+		sound_effect_apple, sound_attack_apple, sound_attack_hit_apple, sound_run_player,
+		sound_game_over, sound_explosion, sound_game_victory
+	};
+
+	for (auto& s : soundEffects) {
+		if (s) {
+			Mix_FreeChunk(s);
+			s = nullptr;
+		}
+	}
+	Mix_Music* musicTracks[] = { sound_game_start, sound_game_menu };
+
+	for (auto& m : musicTracks) {
+		if (m) {
+			Mix_FreeMusic(m);
+			m = nullptr;
+		}
+	}
+
 	Mix_Quit();
 }
