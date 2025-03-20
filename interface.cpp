@@ -7,6 +7,7 @@ interface::interface() {
 	apple_x = 18040;
 	apple_y = 290;
 	check_eat_apple = 0;
+	font = NULL;
 }
 interface::~interface() { ; }
 
@@ -96,4 +97,37 @@ void interface::check_eat_apple_(player& p1) {
 		p1.player_heath += 5;
 		check_eat_apple = 1;
 	}
+}
+
+void interface::render_kill_count(SDL_Renderer* render, int kill,int score) {
+
+     font = TTF_OpenFont("VHANTIQ.TTF", 24);
+	if (!font) {
+		cout << TTF_GetError() << std::endl;
+	}
+
+	SDL_Color gold = { 255, 215, 0 };  
+	SDL_Color red = { 255, 50, 50 };  
+
+	string score_text = "Score: " +to_string(score);
+	string kill_text = "Kills: " + to_string(kill);
+
+	SDL_Surface* score_surface = TTF_RenderText_Solid(font, score_text.c_str(), gold);
+	SDL_Surface* kill_surface = TTF_RenderText_Solid(font, kill_text.c_str(), red);
+
+	SDL_Texture* score_texture = SDL_CreateTextureFromSurface(render, score_surface);
+	SDL_Texture* kill_texture = SDL_CreateTextureFromSurface(render, kill_surface);
+
+	SDL_Rect score_rect = { 800, 10, score_surface->w, score_surface->h };
+	SDL_Rect kill_rect = { 10, 50, kill_surface->w, kill_surface->h };
+
+	SDL_RenderCopy(render, score_texture, NULL, &score_rect);
+	SDL_RenderCopy(render, kill_texture, NULL, &kill_rect);
+
+	SDL_FreeSurface(score_surface);
+	SDL_FreeSurface(kill_surface);
+	SDL_DestroyTexture(score_texture);
+	SDL_DestroyTexture(kill_texture);
+
+
 }

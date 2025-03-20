@@ -28,12 +28,13 @@ player::player() {
     charge_start = 0;
     charge_frame = 0;
     charge_time_frame = 0;
-    on_ground = false;
-    attack_corec = false;
-    player_hit = false;
-    player_died = false;
+    check_player_hit_bomb = false;
     can_use_special = false;
     using_special = false;
+    attack_corec = false;
+    player_died = false;
+    player_hit = false;
+    on_ground = false;
     charging = false;
 }
 

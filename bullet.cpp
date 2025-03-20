@@ -162,7 +162,7 @@ void bullet_manager::add_bullet_special(int x, int y, int direction) {
 	bullets.push_back(temp);
 }
 
-void bullet_manager::update_bullet(camera cam, vector<enemy> &enemy_g,player &p1,sound_manager sound) {
+void bullet_manager::update_bullet(camera cam, vector<enemy> &enemy_g,player &p1,sound_manager sound,status_game &status) {
 
 	for (int i = bullets.size() - 1; i >= 0; i--) {
 		bullets[i].update_bullet(cam);
@@ -182,16 +182,24 @@ void bullet_manager::update_bullet(camera cam, vector<enemy> &enemy_g,player &p1
 				enemy.hit_time = SDL_GetTicks();
 				bullets[i].active_bullet = false; 
 				if (enemy.goblin_heath <= 0) {
+					sound.play_goblin_died_sound();
 					enemy.goblin_dead = true;
+					status.kill_count++;
+					status.score += 100;
+					
 				}
 			}
 			else if (check_aim_enemy(bullet_rect, enemy_rect) && !enemy.goblin_dead &&bullets[i].bullet_special) {
 				enemy.enemy_hit_aim = true;
 				enemy.goblin_hit = true;
 				enemy.goblin_heath -= 3;
+				sound.play_goblin_hit_sound();
 				enemy.hit_time = SDL_GetTicks();
 				if (enemy.goblin_heath <= 0) {
+					sound.play_goblin_died_sound();
 					enemy.goblin_dead = true;
+					status.kill_count++;
+					status.score += 100;
 				}
 			}
 			if (bullets[i].bullet_special && abs(bullets[i].bullet_x - bullets[i].bullet_x_start) > 1500) {

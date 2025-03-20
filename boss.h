@@ -81,7 +81,7 @@ public:
 	void boss_shot(player p1,camera &cam);
 	void boss_update(player p1,camera &cam);
 	void spawn_boss(SDL_Renderer* render,camera cam);
-	void check_boss_hit_attack(bullet_manager& bullets_sword,player &p1,camera &cam,sound_manager &sound);
+	void check_boss_hit_attack(bullet_manager& bullets_sword,player &p1,camera &cam,sound_manager &sound,status_game &status);
 
 
 };

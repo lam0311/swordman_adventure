@@ -73,8 +73,8 @@ void BOSS::boss_shot(player p1,camera &cam) {
 		atacking = true;
 	}
 
-	if(level_bullet>=8) {
-		level_bullet = 8;
+	if(level_bullet>=6) {
+		level_bullet = 6;
 	}
 
 	if (range<shot_range&&current_time - last_shot_time > 850) { 
@@ -100,9 +100,11 @@ void BOSS::boss_shot(player p1,camera &cam) {
 			new_bullet.direction_x = dx;
 			new_bullet.direction_y = dy;
 			new_bullet.active_bullet = true;
-
+			
 			boss_bullets.push_back(new_bullet);
 		}
+		int n = rand() % boss_bullets.size();  
+		boss_bullets.erase(boss_bullets.begin() + n);
 	}
 }
 
@@ -141,7 +143,7 @@ bool check_aim_boss2(SDL_Rect rect_bullet, SDL_Rect enemy) {
 	}
 }
 
-void BOSS::check_boss_hit_attack(bullet_manager& bullets_sword,player &p1,camera &cam,sound_manager &sound) {
+void BOSS::check_boss_hit_attack(bullet_manager& bullets_sword,player &p1,camera &cam,sound_manager &sound,status_game &status) {
 	for (auto& bullet : bullets_sword.bullets) {
 		SDL_Rect bullet_rect = { bullet.bullet_x, bullet.bullet_y , bullet.bullet_w , bullet.bullet_h };
 		SDL_Rect boss_rect2 = { boss_x + 74, boss_y + 140, boss_w - 570 , boss_h - 630 };
@@ -160,6 +162,7 @@ void BOSS::check_boss_hit_attack(bullet_manager& bullets_sword,player &p1,camera
 			bullet.active_bullet = false;
 			if (boss_health <= 0) {
 				check_boss_died = true;
+				status.score += 500;
 				cam.start_slow_motion(1000);
 				victory_start_time = SDL_GetTicks();
 			}
@@ -184,17 +187,19 @@ void BOSS::check_boss_hit_attack(bullet_manager& bullets_sword,player &p1,camera
 		SDL_Rect player_rect = { p1.player_x, p1.player_y, p1.player_w, p1.player_h };
 
 
-		if (check_aim_boss2(bullet_rect, player_rect)&&!check_boss_died&&!p1.charging) {
+		if (check_aim_boss2(bullet_rect, player_rect)&&!check_boss_died) {
 			boss_bullet.active_bullet = false;  
 			sound.check_sound_player_hit = true;
-			if (sound.check_sound_player_hit) {
+			if (sound.check_sound_player_hit && !p1.charging) {
 				sound.play_hit_sound();
 				sound.check_sound_player_hit = false;
 			}
-			p1.player_frame_hit = 0;
-			p1.player_hit = true;
-			p1.player_hit_start = SDL_GetTicks();
-			p1.player_heath -= 1;
+			if (!p1.charging) {
+				p1.player_frame_hit = 0;
+				p1.player_hit = true;
+				p1.player_hit_start = SDL_GetTicks();
+				p1.player_heath -= 1;
+			}
 		}
 	}
 

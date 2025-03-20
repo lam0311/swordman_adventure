@@ -35,6 +35,7 @@ enemy::enemy() {
       frame_bomb2 = 8;
       frame_bomb_time_explore = 0;
       bomb_thrown = false;
+      goblin_hit_yes = false;
     
 
     picture_attack_left.push_back({ 60,79 });
@@ -465,7 +466,7 @@ void enemy::followPlayer(player p1, const int tile_map[MAX_ROWS][MAX_COLS], stat
 
         if (!enemy_attack_bomb) {
             if (tile_map[foot_y][foot_x1] != 0 || tile_map[foot_y][foot_x2] != 0) {
-                if (abs(enemy_x - p1.player_x) < 350 /*&& enemy_on_ground*/ && abs(enemy_y - p1.player_y) <= tile_block * 2) {
+                if (abs(enemy_x - p1.player_x) < 350 && enemy_on_ground && abs(enemy_y - p1.player_y) <= tile_block * 2) {
 
 
 
@@ -559,16 +560,21 @@ void enemy:: update_bomb(const int tile_map[MAX_ROWS][MAX_COLS],player &p1,camer
             bomb.bomb_explore = true;
             sound.play_goblin_bomb_explosion();
         }
-        else if (check_aim_player(bullet_rect, player_rect2)&&!p1.charging) {
+        else if (check_aim_player(bullet_rect, player_rect2)) {
             bomb.bomb_explore = true;
             sound.play_goblin_bomb_explosion();
-            if (!p1.player_hit) {  
+            if (!p1.charging&&!p1.check_player_hit_bomb) {
                 p1.player_heath -= 1;
                 p1.player_hit = true;
+                p1.check_player_hit_bomb = true;
                 p1.player_hit_start = SDL_GetTicks();
+                sound.play_hit_sound();
             }
         }
 
+    }
+    if (SDL_GetTicks() - p1.player_hit_start > 200) {
+        p1.check_player_hit_bomb = false;
     }
    
 

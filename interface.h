@@ -6,7 +6,7 @@ public:
 	int check_eat_apple;
 	int apple_x;
 	int apple_y;
-
+	TTF_Font* font;
 	interface();
 
 
@@ -19,6 +19,7 @@ public:
 	void check_eat_apple_(player& p1);
 	void render_energy(SDL_Renderer* render, player p1);
 	void render_energy2(SDL_Renderer* render, player p1,camera cam);
+	void render_kill_count(SDL_Renderer* render, int kill,int score);
 
 private:
 	SDL_Texture* health;

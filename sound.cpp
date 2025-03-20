@@ -61,6 +61,7 @@ void sound_manager::play_hit_sound() {
 
 void sound_manager::play_goblin_bomb_explosion() {
 	Mix_PlayChannel(9, sound_explosion, 0);
+	Mix_VolumeChunk(sound_explosion, 50);
 }
 
 void sound_manager::play_attack_apple_sound() {

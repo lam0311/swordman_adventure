@@ -34,6 +34,7 @@ struct player {
 	bool on_ground;
 	bool attack_corec;
 	bool player_hit;
+	bool check_player_hit_bomb;
 	bool player_died;
 	bool can_use_special;
 	bool using_special;

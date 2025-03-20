@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"commonFc.h"
 #include"base oj.h"
 void resetgame();
@@ -16,13 +16,20 @@ public:
     int mouse_x;
     int mouse_y;
     int frame_menu_player;
-	Uint32 time_menu_player;
+
+    // Số lượng quái bị tiêu diệt
+    int kill_count;
+    int score;
+
+    Uint32 time_menu_player;
     GAME GO;
     status_game() {
         mouse_x = 0;
         mouse_y = 0;
 		frame_menu_player = 0;
 		time_menu_player = 0;
+        kill_count = 0;
+        score = 0;
         GO = MENU;
     }
 
@@ -51,7 +58,7 @@ public:
     bool load_button(SDL_Renderer* render);
 	void render_decore_menu(SDL_Renderer* render);
 
-    void GAME_OVER(SDL_Renderer* render, base game_over);
+    void GAME_OVER(SDL_Renderer* render, base game_over, TTF_Font* font);
     void GAME_MENU(SDL_Renderer* render, base game_menu);
-    void GAME_VICTORY(SDL_Renderer* render);
+    void GAME_VICTORY(SDL_Renderer* render, TTF_Font* font);
 };

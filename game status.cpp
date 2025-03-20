@@ -1,4 +1,4 @@
-#include"game status.h"
+﻿#include"game status.h"
 
 
 
@@ -20,7 +20,7 @@ bool status_game::load_button(SDL_Renderer* render) {
 	return true;
 }
 
-void status_game::GAME_OVER(SDL_Renderer* render, base game_over) {
+void status_game::GAME_OVER(SDL_Renderer* render, base game_over, TTF_Font* font) {
 
     SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
     SDL_RenderClear(render);
@@ -29,6 +29,26 @@ void status_game::GAME_OVER(SDL_Renderer* render, base game_over) {
 
     game_over.positionimg(render, NULL);
 
+	// Hiển thị số kill
+	SDL_Color red = { 255, 50, 50 };
+	std::string kill_text = "Enemies Defeated: " + std::to_string(kill_count);
+	SDL_Surface* kill_surface = TTF_RenderText_Solid(font, kill_text.c_str(), red);
+	SDL_Texture* kill_texture = SDL_CreateTextureFromSurface(render, kill_surface);
+	SDL_Rect kill_rect = { 440, 200, kill_surface->w+100, kill_surface->h+60 };
+	SDL_RenderCopy(render, kill_texture, NULL, &kill_rect);
+
+	// Hiển thị điểm số
+	std::string score_text = "Score: " + std::to_string(score);
+	SDL_Surface* score_surface = TTF_RenderText_Solid(font, score_text.c_str(), { 255, 165, 0 }); 
+	SDL_Texture* score_texture = SDL_CreateTextureFromSurface(render, score_surface);
+	SDL_Rect score_rect = { 500, 300, score_surface->w+100, score_surface->h+60 };
+	SDL_RenderCopy(render, score_texture, NULL, &score_rect);
+
+	SDL_FreeSurface(kill_surface);
+	SDL_FreeSurface(score_surface);
+	SDL_DestroyTexture(kill_texture);
+	SDL_DestroyTexture(score_texture);
+	SDL_RenderPresent(render);
 
     if (mouse_x > 355 && mouse_x < 355 + 260 && mouse_y>450 && mouse_y < 450 + 100) {
         mouse_x = 0;
@@ -44,28 +64,32 @@ void status_game::GAME_OVER(SDL_Renderer* render, base game_over) {
     SDL_RenderPresent(render);
 }
 
-void status_game::GAME_VICTORY(SDL_Renderer* render) {
-	SDL_Event e;
-	std::cout << "Enter pressed! Returning to MENU...\n";
-	while (SDL_PollEvent(&e)!=0) {
-		if (e.type == SDL_QUIT) {
-			GO = QUIT;
-		}
-		if (e.type == SDL_KEYDOWN) {
-			if (e.key.keysym.sym == SDLK_RETURN) {
-				resetgame(); 
-				GO = MENU;
-				return; 
-			}
-		}
-	}
+void status_game::GAME_VICTORY(SDL_Renderer* render, TTF_Font* font) {
 	SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
 	SDL_RenderClear(render); 
 
 	SDL_Texture* victory_texture = load_("picture/background_victory.png",render);
 	SDL_RenderCopy(render, victory_texture, NULL, NULL);
 
+	// Hiển thị số kill
+	SDL_Color white = { 255, 255, 255 };
+	std::string kill_text = "Enemies Defeated: " + std::to_string(kill_count);
+	SDL_Surface* kill_surface = TTF_RenderText_Solid(font, kill_text.c_str(), white);
+	SDL_Texture* kill_texture = SDL_CreateTextureFromSurface(render, kill_surface);
+	SDL_Rect kill_rect = { 500, 350, kill_surface->w, kill_surface->h };
+	SDL_RenderCopy(render, kill_texture, NULL, &kill_rect);
 
+	// Hiển thị điểm số
+	std::string score_text = "Score: " + std::to_string(score);
+	SDL_Surface* score_surface = TTF_RenderText_Solid(font, score_text.c_str(), { 255, 215, 0 });
+	SDL_Texture* score_texture = SDL_CreateTextureFromSurface(render, score_surface);
+	SDL_Rect score_rect = { 500, 400, score_surface->w, score_surface->h };
+	SDL_RenderCopy(render, score_texture, NULL, &score_rect);
+
+	SDL_FreeSurface(kill_surface);
+	SDL_FreeSurface(score_surface);
+	SDL_DestroyTexture(kill_texture);
+	SDL_DestroyTexture(score_texture);
 	SDL_RenderPresent(render);
 }
 

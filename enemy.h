@@ -21,6 +21,7 @@ public:
 	bool direc_goblin_right;
 	bool direc_goblin_left;
 	bool isattack_goblin;
+	bool goblin_hit_yes;
 	int goblin_heath;
 	bool goblin_dead;
 	bool goblin_hit;
