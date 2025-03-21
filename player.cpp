@@ -1,6 +1,7 @@
 ﻿#include"player.h"
 #include"commonFc.h"
 #include"map.h"
+#include"attack.h"
 using namespace std;
 
 player::player() {
@@ -12,12 +13,12 @@ player::player() {
     picture_w = 0; picture_h = 0;
     x_val = 0;  y_val = 0;
     player_hit_start = 0;
-    player_frame_hit = 0;
     frame_effect_apple = 0;
     time_apple = 0;
     player_died_time = 0;
     frame_player_idle = 0;
     time_player_idle = 0;
+    time_run = 0;
       last_special_attack = 0;
      frame_special_attack = 0;
     frame_special_attack1 = 0;
@@ -27,6 +28,7 @@ player::player() {
     energy = 0; max_energy = 10;
     charge_start = 0;
     charge_frame = 0;
+    frame_run = 0;
     charge_time_frame = 0;
     check_player_hit_bomb = false;
     can_use_special = false;
@@ -42,13 +44,39 @@ void player::box(SDL_Renderer* render,camera cam){
 	SDL_Rect rect = { player_x-cam.camera_x,player_y-cam.camera_y,50,50 };
 	SDL_RenderFillRect(render, &rect);
 }
-void player::aminationrunright(int frame, SDL_Renderer* render, camera cam) {
-	SDL_Rect rect = { player_x - cam.camera_x,player_y - cam.camera_y,player_w,player_h };
-	SDL_RenderCopy(render, sprite_runright[frame], NULL, &rect);
+void player::aminationrunright( SDL_Renderer* render, camera cam) {
+    if (SDL_GetTicks() - time_run > 40) {
+        frame_run = (frame_run + 1) % 16;
+        if (frame_run == 0) {
+            frame_run = 1;
+        }
+        time_run = SDL_GetTicks();
+    }
+    if (on_ground) {
+        SDL_Rect rect = { player_x - cam.camera_x,player_y - cam.camera_y,player_w,player_h };
+        SDL_RenderCopy(render, sprite_runright[frame_run], NULL, &rect);
+    }
+    else {
+        SDL_Rect rect = { player_x - cam.camera_x,player_y - cam.camera_y,player_w,player_h };
+        SDL_RenderCopy(render, sprite_runright[10], NULL, &rect);
+    }
 }
-void player::aminationrunleft(int frame, SDL_Renderer* render, camera cam) {
-	SDL_Rect rect = { player_x - cam.camera_x,player_y - cam.camera_y,player_w,player_h };
-	SDL_RenderCopy(render, sprite_runleft[frame], NULL, &rect);
+void player::aminationrunleft(SDL_Renderer* render, camera cam) {
+    if (SDL_GetTicks() - time_run > 40) {
+        frame_run = (frame_run + 1) % 16;
+        if (frame_run == 0) {
+            frame_run = 1;
+        }
+        time_run = SDL_GetTicks();
+    }
+    if (on_ground) {
+        SDL_Rect rect = { player_x - cam.camera_x,player_y - cam.camera_y,player_w,player_h };
+        SDL_RenderCopy(render, sprite_runleft[frame_run], NULL, &rect);
+    }
+    else {
+        SDL_Rect rect = { player_x - cam.camera_x,player_y - cam.camera_y,player_w,player_h };
+        SDL_RenderCopy(render, sprite_runleft[10], NULL, &rect);
+    }
 }
 void player::Effect_apple_player(SDL_Renderer* render, camera cam) {
     Uint32 curent = SDL_GetTicks();
@@ -216,6 +244,68 @@ bool player::spriterun(SDL_Renderer* render) {
 
 
 
+void player::behavior_player( camera cam, SDL_Renderer* render, bool left, bool right,
+    bool direcleft, bool direcright, bool &isattack, attack &at,sound_manager &sound,player &p1) {
+    if ((right || left) && p1.on_ground) {
+        sound.play_run_player_sound();
+    }
+    else {
+        sound.stop_run_sound();
+    }
+
+    if (right) {
+        p1.aminationrunright(render, cam);
+    }
+
+    else if (left) {
+        p1.aminationrunleft(render, cam);
+    }
+
+    else if (isattack) {
+        if (direcright) {
+            at.aminationattackright( render, cam, p1,isattack);
+        }
+        else if (direcleft) {
+            at.aminationattackleft( render, cam, p1,isattack);
+        }
+    }
+    else if (p1.player_hit) {
+        if (direcright) {
+            at.amination_hit_right(p1, render, cam);
+        }
+        else if (direcleft) {
+            at.amination_hit_left(p1, render, cam);
+        }
+    }
+    else if (p1.charging) {
+        if (direcright) {
+            p1.using_attack_special_right(render, cam);
+        }
+        else if (direcleft) {
+            p1.using_attack_special_left(render, cam);
+        }
+    }
+    else if (p1.using_special) {
+        if (direcright) {
+            p1.using_attack_special_right(render, cam);
+        }
+        else if (direcleft) {
+            p1.using_attack_special_left(render, cam);
+        }
+    }
+
+    else {
+        if (direcright) {
+            p1.render_player_idle_right(render, cam);
+        }
+        else if (direcleft) {
+            p1.render_player_idle_left(render, cam);
+        }
+        else {
+            p1.render_player_idle_right(render, cam);
+        }
+    }
+}
 
 void player::checkvar(const int tile_map[MAX_ROWS][MAX_COLS]) {
     int min_h = min(player_h, tile_block);

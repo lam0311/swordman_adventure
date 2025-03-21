@@ -36,15 +36,11 @@ enemy::enemy() {
       frame_bomb_time_explore = 0;
       bomb_thrown = false;
       goblin_hit_yes = false;
-    
-
-    picture_attack_left.push_back({ 60,79 });
-    picture_attack_left.push_back({ 60,80 });
-    picture_attack_left.push_back({ 60,71 });
-    picture_attack_left.push_back({ 60,70 });
-    picture_attack_left.push_back({ 160,80 });
-    picture_attack_left.push_back({ 110,90 });
-
+      goblin = STANDUP;
+      frame_attack_goblin = 0;
+      attack_goblin_time = 0;
+      frame_run_goblin = 0;
+      run_goblin_time = 0;
 
 }
 
@@ -117,41 +113,33 @@ bool enemy::amination_enemy_goblin(SDL_Renderer* render) {
 	}
 
     char path_[50];
-    for (int i = 0; i < 8; i++) {
-        sprintf_s(path_, "picture/goblin_Run_left%d.png", i);
-        sprite_goblin_runleft[i] = Loadsprite(path_, render);
-        if (!sprite_goblin_runleft[i]) {
-            cout << SDL_GetError();
-            return false;
-        }
-    }
 
-    for (int i = 0; i < 8; i++) {
-        sprintf_s(path_, "picture/goblin_Run%d.png", i);
-        sprite_goblin_runright[i] = Loadsprite(path_, render);
-        if (!sprite_goblin_runright[i]) {
-            cout << SDL_GetError();
-            return false;
-        }
-    }
 
-    for (int i = 0; i < 6; i++) {
-        sprintf_s(path_, "picture/goblin_Attack_r%d.png", i);
-        sprite_goblin_attackright[i] = load_enemy(path_, render);
-        if (!sprite_goblin_attackright[i]) {
+        sprite_goblin_runright = Loadsprite("picture/goblin_Run_right.png", render);
+        if (!sprite_goblin_runright) {
             cout << SDL_GetError();
             return false;
         }
-    }
 
-    for (int i = 0; i < 6; i++) {
-        sprintf_s(path_, "picture/goblin_Attack_l%d.png", i);
-        sprite_goblin_attackleft[i] = load_enemy(path_, render);
-        if (!sprite_goblin_attackleft[i]) {
+        sprite_goblin_runleft = Loadsprite("picture/goblin_Run_left.png", render);
+        if (!sprite_goblin_runleft) {
             cout << SDL_GetError();
             return false;
         }
-    }
+
+    
+  
+        sprite_goblin_attackright = load_enemy("picture/goblin_Attack_vip_right.png", render);
+        if (!sprite_goblin_attackright) {
+            cout << SDL_GetError();
+            return false;
+        }
+
+        sprite_goblin_attackleft = load_enemy("picture/goblin_Attack_vip_left.png", render);
+        if (!sprite_goblin_attackleft) {
+            cout << SDL_GetError();
+            return false;
+        }
 
     for (int i = 0; i < 4; i++) {
         sprintf_s(path_, "picture/Take Hit_goblin_%d.png", i);
@@ -228,23 +216,36 @@ bool enemy::amination_enemy_goblin(SDL_Renderer* render) {
 }
 
 
-void enemy::sprite_enemy_goblin_left(int frame,SDL_Renderer* render, camera& cam) {
-    SDL_Rect rect = { enemy_x - cam.camera_x, enemy_y - cam.camera_y, enemy_w, enemy_h };
-    SDL_RenderCopy(render, sprite_goblin_runleft[frame], NULL, &rect);
-}
-void enemy::sprite_enemy_goblin_right(int frame,SDL_Renderer* render, camera& cam) {
-    SDL_Rect rect = { enemy_x - cam.camera_x, enemy_y - cam.camera_y, enemy_w, enemy_h };
-    SDL_RenderCopy(render, sprite_goblin_runright[frame], NULL, &rect);
-}
-void enemy::sprite_enemy_goblin_attack_right(int frame, SDL_Renderer* render, camera& cam) {
-    int m = 10;
-    int n = 0;
-    if (frame == 4||frame==5) {
-        m = 20;
-        n = 20;
+void enemy::sprite_enemy_goblin_left(SDL_Renderer* render, camera& cam) {
+    Uint32 currentTime_ = SDL_GetTicks();
+    if (currentTime_ - run_goblin_time > 80) {
+        frame_run_goblin = (frame_run_goblin + 1) % 8;
+        run_goblin_time = SDL_GetTicks();
     }
-    SDL_Rect rect = { enemy_x - cam.camera_x-n, enemy_y - cam.camera_y-m,picture_attack_left[frame].first, picture_attack_left[frame].second };
-    SDL_RenderCopy(render, sprite_goblin_attackright[frame], NULL, &rect);
+    SDL_Rect rect_picture = { 150 * (7-frame_run_goblin),0,150,150 };
+    SDL_Rect rect = { enemy_x - cam.camera_x - 100, enemy_y - cam.camera_y - 100 ,enemy_w + 210,enemy_h + 170 };
+    SDL_RenderCopy(render, sprite_goblin_runleft, &rect_picture, &rect);
+}
+void enemy::sprite_enemy_goblin_right(SDL_Renderer* render, camera& cam) {
+    Uint32 currentTime_ = SDL_GetTicks();
+    if (currentTime_ - run_goblin_time > 80) {
+        frame_run_goblin = (frame_run_goblin + 1) % 8;
+        run_goblin_time = SDL_GetTicks();
+    }
+    SDL_Rect rect_picture = { 150 * frame_run_goblin,0,150,150 };
+    SDL_Rect rect = { enemy_x - cam.camera_x - 100, enemy_y - cam.camera_y - 100 ,enemy_w + 210,enemy_h + 170 };
+    SDL_RenderCopy(render, sprite_goblin_runright, &rect_picture, &rect);
+}
+void enemy::sprite_enemy_goblin_attack_right( SDL_Renderer* render, camera& cam) {
+    Uint32 currentTime = SDL_GetTicks();
+    if (currentTime - attack_goblin_time > 85) {
+        frame_attack_goblin = (frame_attack_goblin + 1) % 8;
+        attack_goblin_time = SDL_GetTicks();
+    }
+
+    SDL_Rect rect_picture = { 150*frame_attack_goblin,0,150,150 };
+    SDL_Rect rect = { enemy_x - cam.camera_x -100, enemy_y - cam.camera_y-100 ,enemy_w+210,enemy_h+170 };
+    SDL_RenderCopy(render, sprite_goblin_attackright, &rect_picture, &rect);
 }
 void enemy::sprite_enemy_goblin_idle_right(SDL_Renderer* render, camera cam) {
 	Uint32 curent = SDL_GetTicks();
@@ -266,19 +267,16 @@ void enemy::sprite_enemy_goblin_idle_left(SDL_Renderer* render, camera cam) {
 	SDL_Rect rect = { enemy_x - cam.camera_x,enemy_y - cam.camera_y,enemy_w,enemy_h };
 	SDL_RenderCopy(render, sprite_goblin_idle1, &rec2, &rect);
 }
-void enemy::sprite_enemy_goblin_attack_left(int frame, SDL_Renderer* render, camera& cam) {
-    int m = 10;
-    int n = 0;
-    if ( frame == 5) {
-        m = 20;
-        n = 16;
+void enemy::sprite_enemy_goblin_attack_left( SDL_Renderer* render, camera& cam) {
+    Uint32 currentTime = SDL_GetTicks();
+    if (currentTime - attack_goblin_time > 85) {
+        frame_attack_goblin = (frame_attack_goblin + 1) % 8;
+        attack_goblin_time = SDL_GetTicks();
     }
-    if (frame == 4) {
-        m = 10;
-        n = 60;
-    }
-    SDL_Rect rect = { enemy_x - cam.camera_x-n, enemy_y - cam.camera_y-m, picture_attack_left[frame].first, picture_attack_left[frame].second};
-    SDL_RenderCopy(render, sprite_goblin_attackleft[frame], NULL, &rect);
+
+    SDL_Rect rect_picture = { 150*(7-frame_attack_goblin),0,150,150};
+    SDL_Rect rect = { enemy_x - cam.camera_x -100, enemy_y - cam.camera_y-100 ,enemy_w+210,enemy_h+170 };
+    SDL_RenderCopy(render, sprite_goblin_attackleft, &rect_picture, &rect);
 }
 void enemy::sprite_enemy_goblin_hurt_right(int frame, SDL_Renderer* render, camera& cam) {
     SDL_Rect rect = { enemy_x - cam.camera_x , enemy_y - cam.camera_y,70, 63 };
@@ -426,7 +424,7 @@ void enemy::sprite_bomb_left(SDL_Renderer* render, camera& cam, BULLET &bomb) {
 
 
 
-void enemy::followPlayer(player p1, const int tile_map[MAX_ROWS][MAX_COLS], state_goblin& goblin, int frame, SDL_Renderer* render, camera cam) {
+void enemy::followPlayer(player p1, const int tile_map[MAX_ROWS][MAX_COLS], SDL_Renderer* render, camera cam) {
   
     enemy_y_val += 0.6;
     if (enemy_y_val > 6) {
@@ -466,11 +464,11 @@ void enemy::followPlayer(player p1, const int tile_map[MAX_ROWS][MAX_COLS], stat
 
         if (!enemy_attack_bomb) {
             if (tile_map[foot_y][foot_x1] != 0 || tile_map[foot_y][foot_x2] != 0) {
-                if (abs(enemy_x - p1.player_x) < 350 && enemy_on_ground && abs(enemy_y - p1.player_y) <= tile_block * 2) {
+                if (abs(enemy_x - p1.player_x) < 350 && enemy_on_ground && abs(enemy_y - p1.player_y) <= tile_block ) {
 
 
 
-                    if (dx < 75) {
+                    if (abs(enemy_x - p1.player_x)<75) {
                         enemy_x_val = 0;
                         goblin = ATTACK_GOBLIN;
 

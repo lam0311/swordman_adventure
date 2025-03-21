@@ -4,6 +4,7 @@
 #include"bullet.h"
 #include"player.h"
 #include"sound.h"
+#include"attack.h"
 
 #define PI 3.14159265
 
@@ -82,7 +83,7 @@ public:
 	void boss_update(player p1,camera &cam,sound_manager sound);
 	void spawn_boss(SDL_Renderer* render,camera cam,player p1);
 	void enemy_boss_health(SDL_Renderer* render, camera& cam);
-	void check_boss_hit_attack(bullet_manager& bullets_sword,player &p1,camera &cam,sound_manager &sound,status_game &status);
+	void check_boss_hit_attack(bullet_manager& bullets_sword,player &p1,camera &cam,sound_manager &sound,status_game &status,attack &at);
 
 
 };

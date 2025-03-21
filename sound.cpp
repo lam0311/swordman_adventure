@@ -1,4 +1,4 @@
-#include"sound.h"
+﻿#include"sound.h"
 
 bool sound_manager::loadSound(Mix_Chunk*& sound, const std::string& path) {
 	sound = Mix_LoadWAV(path.c_str());
@@ -41,9 +41,14 @@ bool sound_manager::load_sound_all() {
 		loadSound(sound_game_over, "music/negative_beeps-6008.wav") &&
 		loadSound(sound_explosion, "music/explosion-312361.wav") &&
 		loadSound(sound_game_victory, "music/success-fanfare-trumpets-6185.wav") &&
-		loadSound(sound_boss_attack,"music/medium-explosion-40472.wav");
+		loadSound(sound_boss_attack, "music/medium-explosion-40472.wav"),
+		loadSound(sound_boss_hurt, "music/slap-hurt-pain-sound-effect-262618.wav"),
+		loadSound(sound_attack_special, "music/sword-slash-and-swing-185432.wav"),
+		loadSound(sound_charge, "music/peals-of-thunder-191992 (mp3cut.net).wav");
 }
 
+
+// âm thanh player =============
 void sound_manager::play_attack_sound() {
 	Mix_PlayChannel(1, sound_player_attack, 0);
 }
@@ -58,6 +63,10 @@ void sound_manager::play_effect_apple_sound() {
 		Mix_PlayChannel(5, sound_effect_apple, 0);
 		check_sound_effect_apple = true;
 	}
+}
+
+void sound_manager::play_attack_special_sound() {
+	Mix_PlayChannel(12, sound_attack_special, 0);
 }
 
 void sound_manager::play_hit_sound() {
@@ -77,6 +86,15 @@ void sound_manager::play_attack_apple_sound() {
 	Mix_VolumeChunk(sound_goblin_hit, 80);
 }
 
+void sound_manager::play_charge() {
+	if (!check_charge_sound) {
+		Mix_PlayChannel(13, sound_charge, -1);
+		check_charge_sound = true;
+	}
+}
+
+
+// âm thanh game ==============
 void sound_manager::play_game_over_sound() {
 	Mix_PlayChannel(8, sound_game_over, 0);
 }
@@ -96,6 +114,8 @@ void sound_manager::play_game_victory_sound() {
 	Mix_PlayChannel(9, sound_game_victory, 0);
 }
 
+
+// âm thanh enemy ===============
 void sound_manager::play_game_start_sound() {
 	if (!check_sound_game_start) {
 		Mix_HaltMusic();
@@ -112,6 +132,10 @@ void sound_manager::play_boss_attack_sound() {
 	Mix_VolumeChunk(sound_boss_attack, 70);
 }
 
+void sound_manager::play_boss_hurt_sound() {
+	Mix_PlayChannel(11, sound_boss_hurt, 0);
+}
+
 void sound_manager::play_goblin_bomb_explosion() {
 	Mix_PlayChannel(9, sound_explosion, 0);
 	Mix_VolumeChunk(sound_explosion, 50);
@@ -126,6 +150,8 @@ void sound_manager::play_goblin_died_sound() {
 	Mix_PlayChannel(4, sound_goblin_died, 0);
 }
 
+
+// dừng âm thanh ================
 void sound_manager::stop_game_start_sound() {
 	Mix_HaltMusic();
 	check_sound_game_start = false;
@@ -143,8 +169,23 @@ void sound_manager::stop_run_sound() {
 	}
 }
 
+void sound_manager::stop_charge() {
+	if (check_charge_sound) {
+		Mix_HaltChannel(13);
+		check_charge_sound = false;
+	}
+}
 
 
+
+void sound_manager::play_start_charge(bool check_charge) {
+	if (check_charge) {
+		play_charge();
+	}
+	else {
+		stop_charge();
+	}
+}
 
 void sound_manager::close_sound() {
 

@@ -60,7 +60,7 @@ public:
 
 	vector<BULLET> bullets;
 	void add_bullet(int x, int y, int direction);
-	void add_bullet_special(int x, int y, int direction);
+	void add_bullet_special(int x, int y, int direction, sound_manager sound);
 	void update_bullet(camera cam, vector<enemy> &enemy_g,player &p1,sound_manager sound,status_game &status);
 	void bullets_attack(SDL_Renderer* render, player p1, camera cam);
 

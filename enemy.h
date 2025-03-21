@@ -29,6 +29,8 @@ public:
 	Uint32 goblin_frame_died;
 	bool kt_died_goblin;
 	int frame_died_goblin;
+	int frame_attack_goblin;
+	int frame_run_goblin;
 	int frame_goblin_bomb;
 	int frame_bomb1;
 	int frame_bomb2;
@@ -44,12 +46,13 @@ public:
 	Uint32 frame_bomb_time;
 	Uint32 frame_bomb_time_explore;
 	Uint32  cooldown_bomb;
-
-
+	Uint32  attack_goblin_time;
+	Uint32 run_goblin_time;
+  
+	state_goblin goblin;
 	Uint32 attack_goblin_start;
 	SDL_Texture* load_enemy(const char* path, SDL_Renderer* render);
 	
-	vector<pair<int, int>> picture_attack_left;
 	vector<BULLET> stack_bomb;
 	enemy();
 
@@ -59,12 +62,12 @@ public:
 	void update(const int tile_map[MAX_ROWS][MAX_COLS]);
 
 
-	void followPlayer(player p1, const int tile_map[MAX_ROWS][MAX_COLS], state_goblin& goblin, int frame, SDL_Renderer* render, camera cam);
+	void followPlayer(player p1, const int tile_map[MAX_ROWS][MAX_COLS], SDL_Renderer* render, camera cam);
 	bool amination_enemy_goblin(SDL_Renderer* render);
-	void sprite_enemy_goblin_left(int frame,SDL_Renderer* render, camera& cam);
-	void sprite_enemy_goblin_right(int frame,SDL_Renderer* render, camera& cam);
-	void sprite_enemy_goblin_attack_right(int frame, SDL_Renderer* render, camera& cam);
-	void sprite_enemy_goblin_attack_left(int frame, SDL_Renderer* render, camera& cam);
+	void sprite_enemy_goblin_left(SDL_Renderer* render, camera& cam);
+	void sprite_enemy_goblin_right(SDL_Renderer* render, camera& cam);
+	void sprite_enemy_goblin_attack_right( SDL_Renderer* render, camera& cam);
+	void sprite_enemy_goblin_attack_left( SDL_Renderer* render, camera& cam);
 	void sprite_enemy_goblin_hurt_left(int frame, SDL_Renderer* render, camera& cam);
 	void sprite_enemy_goblin_hurt_right(int frame, SDL_Renderer* render, camera& cam);
 	void sprite_enemy_goblin_died_right(int frame, SDL_Renderer* render, camera& cam);

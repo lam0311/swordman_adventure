@@ -20,10 +20,10 @@ static SDL_Event e;
 static SDL_Texture* style_map[10];
 static SDL_Texture* sprite_runright[16];
 static SDL_Texture* sprite_runleft[16];
-static SDL_Texture* sprite_attackright[10];
-static SDL_Texture* sprite_attackleft[10];
-static SDL_Texture* sprite_hit_right[4];
-static SDL_Texture* sprite_hit_left[4];
+static SDL_Texture* sprite_attackright = NULL;
+static SDL_Texture* sprite_attackleft = NULL;
+static SDL_Texture* sprite_hit_right = NULL;
+static SDL_Texture* sprite_hit_left = NULL;
 static SDL_Texture* support_player[10];
 static SDL_Texture* effect_apple[3];
 static SDL_Texture* effect_apple2[4];
@@ -40,10 +40,10 @@ static SDL_Texture* sprite_bullet_special_left = NULL;
 // goblin
 static SDL_Texture* sprite_goblin_idle = NULL;
 static SDL_Texture* sprite_goblin_idle1 = NULL;
-static SDL_Texture* sprite_goblin_runright[9];
-static SDL_Texture* sprite_goblin_runleft[9];
-static SDL_Texture* sprite_goblin_attackright[7];
-static SDL_Texture* sprite_goblin_attackleft[7];
+static SDL_Texture* sprite_goblin_runright = NULL;
+static SDL_Texture* sprite_goblin_runleft = NULL;
+static SDL_Texture* sprite_goblin_attackright = NULL;
+static SDL_Texture* sprite_goblin_attackleft = NULL;
 static SDL_Texture* sprite_goblin_hit_right[4];
 static SDL_Texture* sprite_goblin_hit_left[4];
 static SDL_Texture* sprite_goblin_died_right[4];
@@ -98,7 +98,9 @@ static Mix_Chunk* sound_game_over = NULL;
 static Mix_Chunk* sound_explosion = NULL;
 static Mix_Chunk* sound_game_victory = NULL;
 static Mix_Chunk* sound_boss_attack = NULL;
-
+static Mix_Chunk* sound_attack_special = NULL;
+static Mix_Chunk* sound_boss_hurt = NULL;
+static Mix_Chunk* sound_charge = NULL;
 
 // bien hang
 const int window_w = 1280;
@@ -110,6 +112,7 @@ const int KEY_B = 180;
 const int tile_block = 64;
 const int MAX_ROWS = 12;
 const int MAX_COLS = 460;
+const int VANTOC_PLAYER_X = 4;
 
 // biến hằng tính chất nhân vật 
 const int PLAYER_START_X = 26000;

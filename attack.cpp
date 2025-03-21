@@ -2,70 +2,96 @@
 
 bool attack::loadattack(SDL_Renderer* render) {
     char path[50];
-    for (int i = 4; i < 8; i++) {
-        sprintf_s(path, "picture/ATTACK_right%d.png", i);
-        sprite_attackright[i - 4] = Loadsprite(path, render);
-        picture_.push_back( {picture_w,picture_h });
-        if (sprite_attackright[i - 4] == NULL) {
+  
+        sprite_attackright = Loadsprite("picture/player_ATTACK_right.png", render);
+        if (sprite_attackright == NULL) {
             cout << SDL_GetError();
             return false;
         }
-    }
 
-    for (int i = 2; i < 6; i++) {
-        sprintf_s(path, "picture/ATTACK_left%d.png", i);
-        sprite_attackleft[i - 2] = Loadsprite(path, render);  
-        picture_2.push_back({ picture_w,picture_h });
-        if (sprite_attackleft[i - 2] == NULL) {  
+        sprite_attackleft = Loadsprite("picture/player_ATTACK_left.png", render);
+        if (sprite_attackleft == NULL) {
             cout << SDL_GetError();
             return false;
         }
-    }
 
-    for (int i = 0; i < 4; i++) {
-        sprintf_s(path, "picture/HURT_right_%d.png", i);
-        sprite_hit_right[i] = Loadsprite(path, render);
-        if (sprite_hit_right[i] == NULL) {
-            cout << SDL_GetError();
-            return false;
-        }
-    }
 
-    for (int i = 0; i < 4; i++) {
-        sprintf_s(path, "picture/HURT_left_%d.png", i);
-        sprite_hit_left[i] = Loadsprite(path, render);
-        if (sprite_hit_left[i] == NULL) {
+        sprite_hit_right = Loadsprite("picture/player_HURT_right.png", render);
+        if (!sprite_hit_right) {
             cout << SDL_GetError();
             return false;
         }
-    }
+        sprite_hit_left = Loadsprite("picture/player_HURT_left.png", render);
+        if (!sprite_hit_left) {
+            cout << SDL_GetError();
+            return false;
+        }
 
     return true;
 
 }
 
-void attack::aminationattackright(int fame, SDL_Renderer* render, camera cam, player x) {
-    SDL_Rect rect;
-    rect = { x.player_x - cam.camera_x,x.player_y - cam.camera_y ,picture_[fame].first,picture_[fame].second };
-    SDL_RenderCopy(render, sprite_attackright[fame], NULL, &rect);
-}
-void attack::aminationattackleft(int fame, SDL_Renderer* render, camera cam, player x) {
-    SDL_Rect rect;
-    int m;
-    if (fame == 1) {
-        m = 70;
+void attack::aminationattackright( SDL_Renderer* render, camera cam, player x,bool &isattack) {
+    SDL_Rect picture_rect = { 96 * frame_attack,0,96,96 };
+    SDL_Rect rect = { x.player_x - cam.camera_x - 85,x.player_y - cam.camera_y - 100,player_w + 160 ,player_h + 130 };
+    SDL_RenderCopy(render, sprite_attackright, &picture_rect, &rect);
+
+    Uint32 currentTime = SDL_GetTicks();
+    if (currentTime - time_frame_attack > 30) {
+        frame_attack = (frame_attack + 1) ;
+        time_frame_attack = SDL_GetTicks();
     }
-    else m = 0;
-    rect = { x.player_x - cam.camera_x -m,x.player_y - cam.camera_y ,picture_2[fame].first,picture_2[fame].second };
-  
-    SDL_RenderCopy(render, sprite_attackleft[fame], NULL, &rect);
+    if (frame_attack >= 7) {
+        isattack = false;
+        frame_attack = 0;
+    }
 }
-void attack::amination_hit_right(int fame, SDL_Renderer* render, camera cam, player x) {
-    SDL_Rect rect = { x.player_x - cam.camera_x,x.player_y - cam.camera_y ,player_w,player_h };
-    SDL_RenderCopy(render, sprite_hit_right[fame], NULL, &rect);
+void attack::aminationattackleft( SDL_Renderer* render, camera cam, player x,bool &isattack) {
+    SDL_Rect picture_rect = { 96 * (6-frame_attack),0,96,96 };
+    SDL_Rect rect = { x.player_x - cam.camera_x - 85,x.player_y - cam.camera_y - 100,player_w + 160 ,player_h + 130 };
+    SDL_RenderCopy(render, sprite_attackleft, &picture_rect, &rect);
+
+    Uint32 currentTime = SDL_GetTicks();
+    if (currentTime - time_frame_attack > 30) {
+        frame_attack = (frame_attack + 1);
+        time_frame_attack = SDL_GetTicks();
+
+    }
+    if (frame_attack >= 7) {
+        isattack = false;
+        frame_attack = 0;
+    }
 }
-void attack::amination_hit_left(int fame, SDL_Renderer* render, camera cam, player x) {
-    SDL_Rect rect = { x.player_x - cam.camera_x,x.player_y - cam.camera_y ,player_w,player_h};
-    SDL_RenderCopy(render, sprite_hit_left[fame], NULL, &rect);
+void attack::amination_hit_right(player &p1, SDL_Renderer* render, camera cam) {
+
+    SDL_Rect picture_rect = { 96*frame_hit,0,96,96 };
+    SDL_Rect rect = { p1.player_x - cam.camera_x-85,p1.player_y - cam.camera_y-100,player_w+160 ,player_h+130 };
+    SDL_RenderCopy(render, sprite_hit_right, &picture_rect, &rect);
+
+    Uint32 currentTime = SDL_GetTicks();
+    if (currentTime - time_frame_hit > 200) {
+        frame_hit = (frame_hit + 1);
+        time_frame_hit = SDL_GetTicks();
+    }
+    if (frame_hit >= 4) {
+        p1.player_hit = false;
+        time_frame_hit = 0;
+    }
+}
+void attack::amination_hit_left(player &p1, SDL_Renderer* render, camera cam) {
+
+    SDL_Rect picture_rect = { 96 * (3-frame_hit),0,96,96 };
+    SDL_Rect rect = { p1.player_x - cam.camera_x-85,p1.player_y - cam.camera_y-100,player_w+160,player_h+130};
+    SDL_RenderCopy(render, sprite_hit_left, &picture_rect, &rect);
+
+    Uint32 currentTime = SDL_GetTicks();
+    if (currentTime - time_frame_hit > 200) {
+        frame_hit = (frame_hit + 1);
+        time_frame_hit = SDL_GetTicks();
+    }
+    if (frame_hit >= 4) {
+        p1.player_hit = false;
+        frame_hit = 0;
+    }
 }
 

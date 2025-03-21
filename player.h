@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include"commonFc.h"
+#include"sound.h"
 struct camera;
+class attack;
 struct player {
 // tính chất nhân vật===============
 	int player_x;
@@ -26,9 +28,9 @@ struct player {
 	int frame_special_attack1;
 	int frame_special_attack2;
 	int frame_special_attack3;
-	int player_frame_hit;
 	int charge_frame;
 	int special_attack_frame;
+	int frame_run;
 	
 // biến kiểm tra tình chất nhân vật=====
 	bool on_ground;
@@ -50,6 +52,8 @@ struct player {
 	Uint32 charge_start ;   
     Uint32 charge_time ; 
 	Uint32 charge_time_frame;
+	Uint32 time_run;
+
 
 	player();
 
@@ -62,9 +66,12 @@ struct player {
 	void box(SDL_Renderer* render,camera cam);
 	SDL_Texture* Loadsprite(const char* path,SDL_Renderer* render);
 	
+	void behavior_player( camera cam, SDL_Renderer* render, bool left, bool right,
+		 bool direcleft, bool direcright, bool &isattack, attack &at,sound_manager &sound,player &p1);
+
 	bool spriterun(SDL_Renderer* render);
-	void aminationrunright(int fame, SDL_Renderer* render, camera cam);
-	void aminationrunleft(int fame, SDL_Renderer* render, camera cam);
+	void aminationrunright( SDL_Renderer* render, camera cam);
+	void aminationrunleft( SDL_Renderer* render, camera cam);
 	void Effect_apple_player(SDL_Renderer* render, camera cam);
 	void Effect_apple2_player(SDL_Renderer* render, camera cam);
 	void render_player_idle_right(SDL_Renderer* render, camera cam);

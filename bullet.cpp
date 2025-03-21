@@ -148,7 +148,7 @@ void bullet_manager::add_bullet(int x, int y, int direction) {
 	bullets.push_back(temp);
 }
 
-void bullet_manager::add_bullet_special(int x, int y, int direction) {
+void bullet_manager::add_bullet_special(int x, int y, int direction,sound_manager sound) {
 	BULLET temp;
 	temp.bullet_x = x;
 	temp.bullet_y = y;
@@ -160,6 +160,7 @@ void bullet_manager::add_bullet_special(int x, int y, int direction) {
 	temp.speed_bullet = 6;
 	temp.bullet_x_start = x;
 	bullets.push_back(temp);
+	sound.play_attack_special_sound();
 }
 
 void bullet_manager::update_bullet(camera cam, vector<enemy> &enemy_g,player &p1,sound_manager sound,status_game &status) {
@@ -193,6 +194,7 @@ void bullet_manager::update_bullet(camera cam, vector<enemy> &enemy_g,player &p1
 				enemy.enemy_hit_aim = true;
 				enemy.goblin_hit = true;
 				enemy.goblin_heath -= 3;
+				sound.play_attack_apple_hit_sound();
 				sound.play_goblin_hit_sound();
 				enemy.hit_time = SDL_GetTicks();
 				if (enemy.goblin_heath <= 0) {

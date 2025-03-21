@@ -150,7 +150,7 @@ bool check_aim_boss2(SDL_Rect rect_bullet, SDL_Rect enemy) {
 	}
 }
 
-void BOSS::check_boss_hit_attack(bullet_manager& bullets_sword,player &p1,camera &cam,sound_manager &sound,status_game &status) {
+void BOSS::check_boss_hit_attack(bullet_manager& bullets_sword,player &p1,camera &cam,sound_manager &sound,status_game &status,attack &at) {
 	for (auto& bullet : bullets_sword.bullets) {
 		SDL_Rect bullet_rect = { bullet.bullet_x, bullet.bullet_y , bullet.bullet_w , bullet.bullet_h };
 		SDL_Rect boss_rect2 = { boss_x + 74, boss_y + 140, boss_w - 570 , boss_h - 630 };
@@ -163,6 +163,7 @@ void BOSS::check_boss_hit_attack(bullet_manager& bullets_sword,player &p1,camera
 				p1.recharge(1);
 				boss_health -= 1;
 			}
+			sound.play_boss_hurt_sound();
 			boss_hit = true;
 			frame_boss_hit = 3;
 			last_hit_time = SDL_GetTicks();
@@ -201,7 +202,7 @@ void BOSS::check_boss_hit_attack(bullet_manager& bullets_sword,player &p1,camera
 				sound.check_sound_player_hit = false;
 			}
 			if (!p1.charging) {
-				p1.player_frame_hit = 0;
+				at.frame_hit = 0;
 				p1.player_hit = true;
 				p1.player_hit_start = SDL_GetTicks();
 				p1.player_heath -= 1;
