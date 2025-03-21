@@ -125,7 +125,7 @@ void status_game::render_decore_menu(SDL_Renderer* render) {
 	SDL_RenderCopy(render, decore_player_menu1, &rect2, &rect3);
 }
 
-void status_game::GAME_MENU(SDL_Renderer* render, base game_menu) {
+void status_game::GAME_MENU(SDL_Renderer* render, base game_menu,int &quit) {
 	SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
 	SDL_RenderClear(render);
 
@@ -136,36 +136,77 @@ void status_game::GAME_MENU(SDL_Renderer* render, base game_menu) {
 	SDL_GetMouseState(&mouse_x_new, &mouse_y_new);
 	
 	SDL_Rect rect_start = { 520, 240, 250, 60 };
-	SDL_Rect rect_exit = { 520, 330, 250, 60 };
-	SDL_Rect rect_help = { 520, 420, 250, 60 };
+	SDL_Rect rect_help = { 520, 330, 250, 60 };
+	SDL_Rect rect_exit = { 520, 420, 250, 60 };
 
 	if (mouse_x_new > rect_start.x && mouse_x_new < rect_start.x + rect_start.w &&
 		mouse_y_new > rect_start.y && mouse_y_new < rect_start.y + rect_start.h) {
-		SDL_RenderCopy(render, button_start2, NULL, &rect_start);
+		SDL_RenderCopy(render, button_start, NULL, &rect_start);
 		if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) GO = START;
 	}
 	else {
-		SDL_RenderCopy(render, button_start, NULL, &rect_start);
+		SDL_RenderCopy(render, button_start2, NULL, &rect_start);
 	}
 
 	if (mouse_x_new > rect_exit.x && mouse_x_new < rect_exit.x + rect_exit.w &&
 		mouse_y_new > rect_exit.y && mouse_y_new < rect_exit.y + rect_exit.h) {
-		SDL_RenderCopy(render, button_exit2, NULL, &rect_exit);
-		if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) GO = QUIT;
+		SDL_RenderCopy(render, button_exit, NULL, &rect_exit);
+		if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) quit=1;
 	}
 	else {
-		SDL_RenderCopy(render, button_exit, NULL, &rect_exit);
+		SDL_RenderCopy(render, button_exit2, NULL, &rect_exit);
 	}
 
 	if (mouse_x_new > rect_help.x && mouse_x_new < rect_help.x + rect_help.w &&
 		mouse_y_new > rect_help.y && mouse_y_new < rect_help.y + rect_help.h) {
-		SDL_RenderCopy(render, button_help2, NULL, &rect_help);
+		SDL_RenderCopy(render, button_help, NULL, &rect_help);
 		if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) GO = HELP;
 	}
 	else {
-		SDL_RenderCopy(render, button_help, NULL, &rect_help);
+		SDL_RenderCopy(render, button_help2, NULL, &rect_help);
 	}
 	mouse_x_new = 0;
 	mouse_y_new = 0;
 	SDL_RenderPresent(render);
+}
+
+void status_game:: GAME_HELP(SDL_Renderer* render) {
+	
+	SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
+	SDL_RenderClear(render);
+
+	
+	SDL_Texture* help_bg = load_("picture/Preview.png", render);
+	if (help_bg) {
+		SDL_RenderCopy(render, help_bg, NULL, NULL);
+	}
+
+	
+	help_instruct = load_("picture/huong_dan.png", render);
+	SDL_Rect rect_instruct = { 250,180,800,350 };
+	SDL_RenderCopy(render, help_instruct, NULL, &rect_instruct);
+
+	SDL_Rect rect_back = { 400, 540, 200, 80 };
+	button_back = load_("picture/back_button1.png", render);
+    button_back2 = load_("picture/back_button2.png", render);
+
+	int mouse_x, mouse_y;
+	SDL_GetMouseState(&mouse_x, &mouse_y);
+
+	if (mouse_x > rect_back.x && mouse_x < rect_back.x + rect_back.w &&
+		mouse_y > rect_back.y && mouse_y < rect_back.y + rect_back.h) {
+		SDL_RenderCopy(render, button_back, NULL, &rect_back);
+		if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) GO = MENU;
+	}
+	else {
+		SDL_RenderCopy(render, button_back2, NULL, &rect_back);
+	}
+
+	
+	SDL_RenderPresent(render);
+
+	
+	SDL_DestroyTexture(help_bg);
+	SDL_DestroyTexture(button_back);
+	SDL_DestroyTexture(button_back2);
 }

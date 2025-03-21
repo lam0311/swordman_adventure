@@ -64,6 +64,7 @@ static SDL_Texture* sprite_boss_hit[4];
 static SDL_Texture* sprite_boss_died = NULL;
 static SDL_Texture* sprite_boss_take_hit = NULL;
 static SDL_Texture* shield_boss = NULL;
+static SDL_Texture* BOSS_index_health = NULL;
 
 
 
@@ -74,8 +75,12 @@ static SDL_Texture* button_help = NULL;
 static SDL_Texture* button_help2 = NULL;
 static SDL_Texture* button_exit = NULL;
 static SDL_Texture* button_exit2 = NULL;
+static SDL_Texture* button_back = NULL;
+static SDL_Texture* button_back2 = NULL;
 static SDL_Texture* decore_player_menu = NULL;
 static SDL_Texture* decore_player_menu1 = NULL;
+static SDL_Texture* help_instruct = NULL;
+
 
 
 // sound
@@ -92,6 +97,7 @@ static Mix_Chunk* sound_run_player = NULL;
 static Mix_Chunk* sound_game_over = NULL;
 static Mix_Chunk* sound_explosion = NULL;
 static Mix_Chunk* sound_game_victory = NULL;
+static Mix_Chunk* sound_boss_attack = NULL;
 
 
 // bien hang

@@ -39,6 +39,7 @@ public:
 	void play_attack_apple_hit_sound();
 	void play_run_player_sound();
 	void play_game_over_sound();
+	void play_boss_attack_sound();
 	void play_goblin_bomb_explosion();
 	void play_game_victory_sound();
 	void stop_game_start_sound();

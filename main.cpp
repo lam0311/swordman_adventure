@@ -175,7 +175,7 @@ void resetgame() {
     p1.player_died = false;
     p1.player_hit = false;
     p1.player_frame_hit = 0;
-    bigmonster.boss_health = 3;
+    bigmonster.boss_health = 20;
 	bigmonster.check_boss_died = false;
 	bigmonster.boss_hit = false;
 	bigmonster.atacking = false;
@@ -183,8 +183,8 @@ void resetgame() {
 	inter.apple_x = 18040;
 	inter.apple_y = 290;
     status.kill_count = 0;
+    
     status.score = 0;
-
 	for (int i = 0; i < bigmonster.boss_bullets.size(); i++) {
 		bigmonster.boss_bullets[i].active_bullet = false;
 	}
@@ -198,6 +198,9 @@ void resetgame() {
         enemy_g[i].kt_died_goblin = false;
         enemy_g[i].goblin_hit = false;
         enemy_g[i].frame_died_goblin = 0;
+        for (auto& bomb : enemy_g[i].stack_bomb) {
+            bomb.active_bullet = false;
+        }
         enemy_g[i].stack_bomb.clear();
     }
     for (int i = 37; i < 60; i++) {
@@ -208,6 +211,9 @@ void resetgame() {
         enemy_g[i].kt_died_goblin = false;
         enemy_g[i].goblin_hit = false;
         enemy_g[i].frame_died_goblin = 0;
+        for (auto& bomb : enemy_g[i].stack_bomb) {
+            bomb.active_bullet = false;
+        }
         enemy_g[i].stack_bomb.clear();
     }
     cam.resetcam();
@@ -439,15 +445,18 @@ int main(int argc, char* argv[]) {
 
         if (status.GO == MENU) {
             sound.play_game_menu_sound();
-            status.GAME_MENU(render, game_menu);
+            status.GAME_MENU(render, game_menu,quit);
             if (status.GO == START) {
                 sound.stop_game_menu_sound();
                 resetgame();
             }
         }
-
+        else if (status.GO == HELP) {
+            status.GAME_HELP(render);
+        }
         else if (status.GO == GAME_OVER) {
             sound.stop_game_start_sound();
+            sound.stop_run_sound();
             Uint32 currentime = SDL_GetTicks();
             if (currentime - p1.player_died_time > 1000) {
                 status.GAME_OVER(render, game_over_, inter.font);
@@ -715,8 +724,8 @@ int main(int argc, char* argv[]) {
 
             //boss
             bigmonster.check_boss_hit_attack(bullets_sword, p1, cam, sound, status);
-            bigmonster.boss_update(p1, cam);
-            bigmonster.spawn_boss(render, cam);
+            bigmonster.boss_update(p1, cam,sound);
+            bigmonster.spawn_boss(render, cam,p1);
 
             // ten
             bullets_sword.bullets_attack(render, p1, cam);

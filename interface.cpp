@@ -46,7 +46,7 @@ bool interface::blood_index(SDL_Renderer* render) {
 
 void interface::position_blood_index(SDL_Renderer* render,player p1) {
 
-	SDL_Rect rect1 = { 0,0,28 * p1.player_heath+24 ,30 };
+	SDL_Rect rect1 = { 0,0,360 ,30 };
 	SDL_RenderCopy(render, background_blood, NULL, &rect1);
 
 	for (int i = 0; i < p1.player_heath; i++) {

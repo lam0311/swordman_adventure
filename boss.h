@@ -78,9 +78,10 @@ public:
 	}
 
 	bool load_inmage_boss(SDL_Renderer* render);
-	void boss_shot(player p1,camera &cam);
-	void boss_update(player p1,camera &cam);
-	void spawn_boss(SDL_Renderer* render,camera cam);
+	void boss_shot(player p1,camera &cam,sound_manager sound);
+	void boss_update(player p1,camera &cam,sound_manager sound);
+	void spawn_boss(SDL_Renderer* render,camera cam,player p1);
+	void enemy_boss_health(SDL_Renderer* render, camera& cam);
 	void check_boss_hit_attack(bullet_manager& bullets_sword,player &p1,camera &cam,sound_manager &sound,status_game &status);
 
 

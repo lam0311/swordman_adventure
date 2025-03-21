@@ -555,7 +555,7 @@ void enemy:: update_bomb(const int tile_map[MAX_ROWS][MAX_COLS],player &p1,camer
             bomb.y_val += 0.2;
         }
         SDL_Rect bullet_rect = { bomb.bullet_x-10, bomb.bullet_y , bomb.bullet_w-78 , bomb.bullet_h-78 };
-        SDL_Rect player_rect2 = { p1.player_x ,p1.player_y,p1.player_w , p1.player_h };
+        SDL_Rect player_rect2 = { p1.player_x+15 ,p1.player_y,p1.player_w-30 , p1.player_h };
         if (check_map_bomb(tile_map, bomb)) {
             bomb.bomb_explore = true;
             sound.play_goblin_bomb_explosion();

@@ -46,15 +46,23 @@ bool BOSS ::load_inmage_boss(SDL_Renderer* render) {
 		}
 
 	}
-
+	BOSS_index_health = load_enemy("picture/thanh mau.png", render);
+	if (!BOSS_index_health) {
+		cout << SDL_GetError();
+		return false;
+	}
 	
 
 
 	return true;
 }
 
+void BOSS::enemy_boss_health(SDL_Renderer* render, camera& cam) {
+	SDL_Rect rect = { boss_x - cam.camera_x-60 , boss_y - cam.camera_y+40,20 *boss_health , 140 };
+	SDL_RenderCopy(render, BOSS_index_health, NULL, &rect);
+}
 
-void BOSS::boss_shot(player p1,camera &cam) {
+void BOSS::boss_shot(player p1,camera &cam,sound_manager sound) {
 	Uint32 current_time = SDL_GetTicks();
 
 	int range = abs(boss_x - p1.player_x);
@@ -77,7 +85,7 @@ void BOSS::boss_shot(player p1,camera &cam) {
 		level_bullet = 6;
 	}
 
-	if (range<shot_range&&current_time - last_shot_time > 850) { 
+	if (range<shot_range&&current_time - last_shot_time > 1250) { 
 		if (!check_boss_died) {
 			cam.start_shake(10, 300);
 		}
@@ -103,13 +111,12 @@ void BOSS::boss_shot(player p1,camera &cam) {
 			
 			boss_bullets.push_back(new_bullet);
 		}
-		int n = rand() % boss_bullets.size();  
-		boss_bullets.erase(boss_bullets.begin() + n);
+		sound.play_boss_attack_sound();
 	}
 }
 
-void BOSS::boss_update(player p1,camera &cam) {
-	boss_shot(p1,cam);
+void BOSS::boss_update(player p1,camera &cam,sound_manager sound) {
+	boss_shot(p1,cam,sound);
 
 	if (is_defending && SDL_GetTicks() - defense_start_time > 5000) {
 		is_defending = false;
@@ -135,7 +142,7 @@ void BOSS::boss_update(player p1,camera &cam) {
 }
 
 bool check_aim_boss2(SDL_Rect rect_bullet, SDL_Rect enemy) {
-	if (rect_bullet.x<enemy.x + enemy.w + 30 && rect_bullet.x + rect_bullet.w - 15>enemy.x && rect_bullet.y<enemy.y + enemy.h && rect_bullet.y + rect_bullet.h>enemy.y) {
+	if (rect_bullet.x<enemy.x + enemy.w  && rect_bullet.x + rect_bullet.w >enemy.x && rect_bullet.y<enemy.y + enemy.h && rect_bullet.y + rect_bullet.h>enemy.y) {
 		return true;
 	}
 	else {
@@ -184,8 +191,7 @@ void BOSS::check_boss_hit_attack(bullet_manager& bullets_sword,player &p1,camera
 
 	for (auto& boss_bullet : boss_bullets) {  
 		SDL_Rect bullet_rect = { boss_bullet.bullet_x, boss_bullet.bullet_y , boss_bullet.bullet_w - 70 , boss_bullet.bullet_h - 70 };
-		SDL_Rect player_rect = { p1.player_x, p1.player_y, p1.player_w, p1.player_h };
-
+		SDL_Rect player_rect = { p1.player_x+15, p1.player_y, p1.player_w-30, p1.player_h };
 
 		if (check_aim_boss2(bullet_rect, player_rect)&&!check_boss_died) {
 			boss_bullet.active_bullet = false;  
@@ -209,12 +215,10 @@ void BOSS::check_boss_hit_attack(bullet_manager& bullets_sword,player &p1,camera
 
 
 
-void BOSS::spawn_boss(SDL_Renderer* render, camera cam) {
+void BOSS::spawn_boss(SDL_Renderer* render, camera cam,player p1) {
 	Uint32 current_time = SDL_GetTicks();
 
-
-
-
+	enemy_boss_health(render, cam);
 	if (check_boss_died) {
 		if (frame_boss_die <= 0) {
 			frame_boss_die = 0;
