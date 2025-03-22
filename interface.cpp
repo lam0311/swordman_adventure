@@ -13,36 +13,15 @@ interface::~interface() { ; }
 
 
 bool interface::blood_index(SDL_Renderer* render) {
-
 	health = Loadsprite("picture/Health.png", render);
-	if (health == NULL) {
-		return false;
-	}
-
 	enegy_index = Loadsprite("picture/thanh nang luong.png", render);
-	if (enegy_index == NULL) {
-		return false;
-	}
-
 	background_blood = Loadsprite("picture/blood_index.png", render);
-	if (background_blood == NULL) {
-		return false;
-	}
-
-
 	support_player[0] = Loadsprite("picture/Food.png", render);
-	if (!support_player[0]) {
-		return false;
-	}
 	enegy_index2 = Loadsprite("picture/thanh no.png", render);
-	if (!enegy_index2) {
-		return false;
-	}
-	
 
-	return true;
-
+	return health && enegy_index && background_blood && support_player[0] && enegy_index2;
 }
+
 
 void interface::position_blood_index(SDL_Renderer* render,player p1) {
 
@@ -55,7 +34,6 @@ void interface::position_blood_index(SDL_Renderer* render,player p1) {
 	}
 
 }
-
 
 void interface::render_energy(SDL_Renderer* render, player p1) {
 
@@ -89,12 +67,14 @@ void interface::spamw_apple(SDL_Renderer* render, camera cam) {
 	SDL_RenderCopy(render, support_player[0], NULL, &rect);
 }
 
-
 void interface::check_eat_apple_(player& p1) {
 	if (apple_x < p1.player_x + p1.player_w && apple_x + 34 > p1.player_x && apple_y < p1.player_y + p1.player_h && apple_y + 34 > p1.player_y) {
 		apple_x = 0;
 		apple_y = 0;
 		p1.player_heath += 5;
+		if (p1.player_heath > 12) {
+			p1.player_heath = 12;
+		}
 		check_eat_apple = 1;
 	}
 }

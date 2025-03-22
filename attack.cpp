@@ -46,6 +46,7 @@ void attack::aminationattackright( SDL_Renderer* render, camera cam, player x,bo
         frame_attack = 0;
     }
 }
+
 void attack::aminationattackleft( SDL_Renderer* render, camera cam, player x,bool &isattack) {
     SDL_Rect picture_rect = { 96 * (6-frame_attack),0,96,96 };
     SDL_Rect rect = { x.player_x - cam.camera_x - 85,x.player_y - cam.camera_y - 100,player_w + 160 ,player_h + 130 };
@@ -62,6 +63,7 @@ void attack::aminationattackleft( SDL_Renderer* render, camera cam, player x,boo
         frame_attack = 0;
     }
 }
+
 void attack::amination_hit_right(player &p1, SDL_Renderer* render, camera cam) {
 
     SDL_Rect picture_rect = { 96*frame_hit,0,96,96 };
@@ -78,6 +80,7 @@ void attack::amination_hit_right(player &p1, SDL_Renderer* render, camera cam) {
         time_frame_hit = 0;
     }
 }
+
 void attack::amination_hit_left(player &p1, SDL_Renderer* render, camera cam) {
 
     SDL_Rect picture_rect = { 96 * (3-frame_hit),0,96,96 };

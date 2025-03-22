@@ -1,6 +1,7 @@
 #include"bullet.h"
 #include"commonFc.h"
 #include "enemy.h"
+
 bool BULLET::animation_bullet(SDL_Renderer* render) {
 	char path[50];
 	for (int i = 0; i < 4; i++) {
@@ -42,7 +43,6 @@ bool BULLET::animation_bullet(SDL_Renderer* render) {
 	return true;
 }
 
-
 void BULLET::update_bullet(camera cam) {
 	if (active_bullet) {
 		bullet_x += speed_bullet * direction_bullet;
@@ -53,6 +53,8 @@ void BULLET::update_bullet(camera cam) {
 
 
 }
+
+
 
 void BULLET::bullet_gun(SDL_Renderer* render, player p1, camera cam) {
 	Uint32 currentime = SDL_GetTicks();
@@ -89,9 +91,6 @@ void BULLET::bullet_gun(SDL_Renderer* render, player p1, camera cam) {
 
 }
 
-
-
-
 void BULLET::bullet_gun_hit(SDL_Renderer* render, camera cam, vector<enemy> &enemy_g) {
 
 	Uint32 currentime = SDL_GetTicks();
@@ -121,11 +120,6 @@ void BULLET::bullet_gun_hit(SDL_Renderer* render, camera cam, vector<enemy> &ene
 
 
 
-
-
-
-
-
 bool check_aim_enemy(SDL_Rect rect_bullet, SDL_Rect enemy) {
 	if (rect_bullet.x<enemy.x + enemy.w+30 && rect_bullet.x + rect_bullet.w-15>enemy.x && rect_bullet.y<enemy.y + enemy.h && rect_bullet.y + rect_bullet.h>enemy.y) {
 		return true;
@@ -134,10 +128,6 @@ bool check_aim_enemy(SDL_Rect rect_bullet, SDL_Rect enemy) {
 		return false;
 	}
 }
-
-
-
-
 
 void bullet_manager::add_bullet(int x, int y, int direction) {
 	BULLET temp;
@@ -167,7 +157,6 @@ void bullet_manager::update_bullet(camera cam, vector<enemy> &enemy_g,player &p1
 
 	for (int i = bullets.size() - 1; i >= 0; i--) {
 		bullets[i].update_bullet(cam);
-
 
 		for (auto& enemy : enemy_g) {
 			SDL_Rect bullet_rect = { bullets[i].bullet_x, bullets[i].bullet_y, bullets[i].bullet_w, bullets[i].bullet_h };
@@ -209,13 +198,7 @@ void bullet_manager::update_bullet(camera cam, vector<enemy> &enemy_g,player &p1
 			}
 		}
 
-
-
 	}
-
-
-
-
 
 	for (int i = bullets.size() - 1; i >= 0; i--) {
 		if (!bullets[i].active_bullet) {
@@ -223,10 +206,7 @@ void bullet_manager::update_bullet(camera cam, vector<enemy> &enemy_g,player &p1
 		}
 	}
 
-
-
 }
-
 
 void bullet_manager::bullets_attack(SDL_Renderer* render, player p1, camera cam) {
 	for (auto& bullet : bullets) {

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"commonFc.h"
 #include"enemy.h"
 #include"bullet.h"
@@ -12,24 +12,30 @@
 
 class BOSS : public enemy {
 public:              
-
+	// biến tình chất =====
 	int boss_x, boss_y; 
 	int boss_w, boss_h;  
 	int boss_health;  
 	int shot_range;
+	int hit_count;
+	int phase;
+
+	// biến frame =====
 	int frame_sprite_boss_shot;
 	int frame_bullet_boss_shot;
 	int frame_sprite_idle;
 	int frame_boss_die;
 	int frame_boss_hit;
 	int frame_boss_shield;
-	int hit_count;
 
+	// biến kiểm tra =====
 	bool atacking;
 	bool check_boss_died;
 	bool boss_hit;
 	bool is_defending;
+	bool used_ultimate;  
 
+	// biến thời gian ======
 	Uint32 last_frame_boss;
 	Uint32 last_hit_boss;
 	Uint32 last_shot_time;
@@ -42,8 +48,8 @@ public:
 	Uint32 defense_duration;
 	Uint32 time_frame_shiled;
 	Uint32 victory_start_time;
+	Uint32 stun_start_time;
 	vector<BULLET> boss_bullets;
-	int level_bullet;
 
 	BOSS() {
 		boss_x = 28000;
@@ -57,7 +63,6 @@ public:
 		frame_bullet_boss_shot = 0;
 		frame_sprite_idle = 3;
 		last_frame_boss = 0; 
-		level_bullet = 0;
 		last_level_time = 0;
 		last_idle_time = 0;
 		frame_boss_hit = 3;
@@ -66,6 +71,8 @@ public:
 		frame_boss_die = 3;
 		last_boss_die = 0;
 		last_hit_time = 0;
+		phase = 0;
+		hit_count = 0;
 		hit_count = 0;
 		defense_start_time = 0;
 		defense_duration = 0;
@@ -76,9 +83,15 @@ public:
 		boss_hit = false;
 		atacking = false;
 		is_defending = false;
+		used_ultimate = false;
 	}
 
 	bool load_inmage_boss(SDL_Renderer* render);
+	void sprite_defending_boss(SDL_Renderer* render, camera cam, Uint32 current);
+	void sprite_boss_idle_(SDL_Renderer* render, camera cam, Uint32 current);
+	void sprite_boss_hit(SDL_Renderer* render, camera cam, Uint32 currentt);
+	void sprite_boss_attack(SDL_Renderer* render, camera cam, Uint32 current);
+	void sprite_boss_died_(SDL_Renderer* render, camera cam, Uint32 current);
 	void boss_shot(player p1,camera &cam,sound_manager sound);
 	void boss_update(player p1,camera &cam,sound_manager sound);
 	void spawn_boss(SDL_Renderer* render,camera cam,player p1);

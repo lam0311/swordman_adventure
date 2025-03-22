@@ -64,52 +64,102 @@ void BOSS::enemy_boss_health(SDL_Renderer* render, camera& cam) {
 
 void BOSS::boss_shot(player p1,camera &cam,sound_manager sound) {
 	Uint32 current_time = SDL_GetTicks();
-
 	int range = abs(boss_x - p1.player_x);
 
 
-	if (range < shot_range && current_time - last_level_time > 4400) {
-		level_bullet++;
-		last_level_time = SDL_GetTicks();
+	// Xác định phase của Boss dựa trên lượng máu
+	if (boss_health > 12) {
+		phase = 1;
+	}
+	else if (boss_health > 6) {
+		phase = 2;
+	}
+	else {
+		phase = 3;
 	}
 
-	else if(range >= shot_range){
-		level_bullet = 0;
+	if (range >= shot_range && current_time - last_shot_time < 1800) {
 		atacking = false;
 	}
 	else {
 		atacking = true;
 	}
 
-	if(level_bullet>=6) {
-		level_bullet = 6;
-	}
-
-	if (range<shot_range&&current_time - last_shot_time > 1250) { 
-		if (!check_boss_died) {
-			cam.start_shake(10, 300);
-		}
+	if (range < shot_range && current_time - last_shot_time > 1800) {
+		
 		last_shot_time = current_time;
-
 		last_idle_time = current_time;
 
-		int bullet_count = 12 + level_bullet;
+		if (phase == 2) {
+			// Phase 2: Bắn vòng tròn
+			int bullet_count = 16;
+			for (int i = 0; i < bullet_count; i++) {
+				double angle = (2 * PI / bullet_count) * i;
+				double dx = cos(angle);
+				double dy = sin(angle);
+				int rand_x = (rand() % 30) - 15;
+				int rand_y = (rand() % 30) - 15;
 
-		for (int i = 0; i < bullet_count; i++) {
 
-			double angle = (2 * PI / bullet_count) * i; 
-			double dx = cos(angle);
-			double dy = sin(angle);
+				BULLET new_bullet;
+				new_bullet.bullet_x = boss_x + 110 + rand_x;
+				new_bullet.bullet_y = boss_y + 145 + rand_y;
+				new_bullet.speed_bullet = 4;
+				new_bullet.direction_x = dx;
+				new_bullet.direction_y = dy;
+				new_bullet.active_bullet = true;
 
-			BULLET new_bullet;
-			new_bullet.bullet_x = boss_x + 110;
-			new_bullet.bullet_y = boss_y +145;
-			new_bullet.speed_bullet = 4;
-			new_bullet.direction_x = dx;
-			new_bullet.direction_y = dy;
-			new_bullet.active_bullet = true;
+				boss_bullets.push_back(new_bullet);
+			}
+		}
+
+		else if (phase == 1) {
+			// Phase 1: Bắn theo hàng ngang nhằm vào nhân vật 
+			double dx = p1.player_x - boss_x;
+			double dy = p1.player_y - boss_y;
+
+			double length = sqrt(dx * dx + dy * dy);
+
+			if (length != 0) {
+				dx /= length; 
+				dy /= length; 
+			}
+			int bullet_count = 6;
+			double spacing = 40;
+
+			for (int i = 0; i < bullet_count; i++) {
+				// vector dx,-dy vuông góc ta tính như vậy để đạn dàn hàng ngang với khoảng cách bằng spacing
+				double x = -dy * spacing * (i - bullet_count / 2);
+				double y = dx * spacing * (i - bullet_count / 2);
 			
-			boss_bullets.push_back(new_bullet);
+				BULLET new_bullet;
+				new_bullet.bullet_x = boss_x + 110 + x;
+				new_bullet.bullet_y = boss_y + 145 + y;
+				new_bullet.speed_bullet = 5;
+				new_bullet.direction_x = dx ;
+				new_bullet.direction_y = dy ;
+				new_bullet.active_bullet = true;
+
+				boss_bullets.push_back(new_bullet);
+			}
+
+		}
+
+		else if (phase == 3) {
+			// Phase 3: Bắn theo hàng dọc
+			int bullet_count = 14; 
+			for (int i = 0; i < bullet_count; i++) {
+				BULLET new_bullet;
+				int rand_x = (rand() % 40) - 20;
+				new_bullet.bullet_x = boss_x + 140 * (i - bullet_count / 2) + rand_x;
+				new_bullet.bullet_y = boss_y - 250;
+				new_bullet.speed_bullet = 7;
+				new_bullet.direction_x = 0; 
+				new_bullet.direction_y = 1;
+				new_bullet.active_bullet = true;
+
+				boss_bullets.push_back(new_bullet);
+			}
 		}
 		sound.play_boss_attack_sound();
 	}
@@ -131,7 +181,6 @@ void BOSS::boss_update(player p1,camera &cam,sound_manager sound) {
 			bullet.active_bullet = false;
 		}
 	}
-
 
 	for (int i = boss_bullets.size() - 1; i >= 0; i--) {
 		if (!boss_bullets[i].active_bullet) {
@@ -188,8 +237,6 @@ void BOSS::check_boss_hit_attack(bullet_manager& bullets_sword,player &p1,camera
 		hit_count = 0; 
 	}
 
-
-
 	for (auto& boss_bullet : boss_bullets) {  
 		SDL_Rect bullet_rect = { boss_bullet.bullet_x, boss_bullet.bullet_y , boss_bullet.bullet_w - 70 , boss_bullet.bullet_h - 70 };
 		SDL_Rect player_rect = { p1.player_x+15, p1.player_y, p1.player_w-30, p1.player_h };
@@ -215,97 +262,111 @@ void BOSS::check_boss_hit_attack(bullet_manager& bullets_sword,player &p1,camera
 
 
 
+void BOSS::sprite_defending_boss(SDL_Renderer* render, camera cam, Uint32 current) {
+	if (current - time_frame_shiled > 40) {
+		frame_boss_shield = (frame_boss_shield + 1) % 13;
+		time_frame_shiled = SDL_GetTicks();
+	}
+	SDL_Rect boss_picture = { frame_boss_shield * 63, 0, 63, 63 };
+	SDL_Rect boss_rect = { boss_x - cam.camera_x + 7 , boss_y - cam.camera_y + 30 , 300, 300 };
+	SDL_RenderCopy(render, shield_boss, &boss_picture, &boss_rect);
+}
 
-void BOSS::spawn_boss(SDL_Renderer* render, camera cam,player p1) {
+void BOSS::sprite_boss_idle_(SDL_Renderer* render, camera cam, Uint32 current_time) {
+	if (current_time - last_idle_time > 90) {
+		frame_sprite_idle = (frame_sprite_idle - 1);
+		if (frame_sprite_idle < 0) {
+			frame_sprite_idle = 3;
+		}
+		last_idle_time = current_time;
+	}
+	SDL_Rect boss_picture = { frame_sprite_idle * 150, 0, 150, 150 };
+	SDL_Rect boss_rect = { boss_x - cam.camera_x - 200, boss_y - cam.camera_y - 230, boss_w, boss_h };
+
+	SDL_RenderCopy(render, sprite_boss_idle, &boss_picture, &boss_rect);
+}
+
+void BOSS::sprite_boss_hit(SDL_Renderer* render, camera cam, Uint32 current_time) {
+	if (current_time - last_hit_boss > 130) {
+		frame_boss_hit = (frame_boss_hit - 1);
+		if (frame_boss_hit == 0) {
+			boss_hit = false;
+			frame_boss_hit = 3;
+		}
+		last_hit_boss = current_time;
+	}
+
+	SDL_Rect boss_picture = { frame_boss_hit * 150, 0, 150, 150 };
+	SDL_Rect boss_rect = { boss_x - cam.camera_x - 200, boss_y - cam.camera_y - 230, boss_w, boss_h };
+
+	SDL_RenderCopy(render, sprite_boss_take_hit, &boss_picture, &boss_rect);
+}
+
+void BOSS::sprite_boss_attack(SDL_Renderer* render, camera cam, Uint32 current_time) {
+	if (current_time - last_frame_boss > 90) {
+		frame_sprite_boss_shot = (frame_sprite_boss_shot - 1);
+		if (frame_sprite_boss_shot < 0) {
+			frame_sprite_boss_shot = 8;
+		}
+		last_frame_boss = current_time;
+	}
+	SDL_Rect boss_picture = { frame_sprite_boss_shot * 150, 0, 150, 150 };
+	SDL_Rect boss_rect = { boss_x - cam.camera_x - 200, boss_y - cam.camera_y - 230, boss_w, boss_h };
+
+	SDL_RenderCopy(render, sprite_boss_attacking, &boss_picture, &boss_rect);
+}
+
+void BOSS::sprite_boss_died_(SDL_Renderer* render, camera cam, Uint32 current_time) {
+	if (frame_boss_die <= 0) {
+		frame_boss_die = 0;
+	}
+	else {
+		if (current_time - last_boss_die > 160) {
+			frame_boss_die = (frame_boss_die - 1);
+			last_boss_die = current_time;
+		}
+	}
+	SDL_Rect boss_picture = { frame_boss_die * 150, 0, 150, 150 };
+	SDL_Rect boss_rect = { boss_x - cam.camera_x - 200, boss_y - cam.camera_y - 230, boss_w, boss_h };
+
+	SDL_RenderCopy(render, sprite_boss_died, &boss_picture, &boss_rect);
+}
+
+void BOSS::spawn_boss(SDL_Renderer* render, camera cam, player p1) {
 	Uint32 current_time = SDL_GetTicks();
 
 	enemy_boss_health(render, cam);
 	if (check_boss_died) {
-		if (frame_boss_die <= 0) {
-			frame_boss_die = 0;
+		sprite_boss_died_(render, cam, current_time);
+	}
+	else {
+		if (boss_hit) {
+			sprite_boss_hit(render, cam, current_time);
+		}
+		else if (!atacking || current_time - last_idle_time > 1800) {
+			sprite_boss_idle_(render, cam, current_time);
 		}
 		else {
-			if (current_time - last_boss_die > 160) {
-				frame_boss_die = (frame_boss_die - 1);
-				last_boss_die = current_time;
-			}
+			sprite_boss_attack(render, cam, current_time);
 		}
-		SDL_Rect boss_picture = { frame_boss_die * 150, 0, 150, 150 };
-		SDL_Rect boss_rect = { boss_x - cam.camera_x - 200, boss_y - cam.camera_y - 230, boss_w, boss_h };
 
-		SDL_RenderCopy(render, sprite_boss_died,&boss_picture, &boss_rect);
+		if (current_time - frame_bullet_time > 90) {
+			frame_bullet_boss_shot = (frame_bullet_boss_shot + 1) % 3;
+			frame_bullet_time = SDL_GetTicks();
+		}
 
+
+		for (auto& bullet : boss_bullets) {
+			SDL_Rect bullet_rect = { bullet.bullet_x - cam.camera_x, bullet.bullet_y - cam.camera_y, 30, 30 };
+			SDL_RenderCopy(render, sprite_bullet_boss[frame_bullet_boss_shot], NULL, &bullet_rect);
+		}
+
+		if (is_defending) {
+			sprite_defending_boss(render, cam, current_time);
+		}
 	}
-	 else {
-
-		 if (boss_hit) {
-			 if (current_time - last_hit_boss > 130) {
-				 frame_boss_hit = (frame_boss_hit - 1);
-				 if (frame_boss_hit == 0) {
-					 boss_hit = false;
-					 frame_boss_hit = 3;
-				 }
-				 last_hit_boss = current_time;
-			 }
-
-			 SDL_Rect boss_picture = { frame_boss_hit * 150, 0, 150, 150 };
-			 SDL_Rect boss_rect = { boss_x - cam.camera_x - 200, boss_y - cam.camera_y - 230, boss_w, boss_h };
-
-			 SDL_RenderCopy(render, sprite_boss_take_hit, &boss_picture, &boss_rect);
-		 }
-
-		 else if (!atacking || current_time - last_idle_time > 1500) {
-			 if (current_time - last_idle_time > 90) {
-				 frame_sprite_idle = (frame_sprite_idle - 1);
-				 if (frame_sprite_idle < 0) {
-					 frame_sprite_idle = 3;
-				 }
-				 last_idle_time = current_time;
-			 }
-			 SDL_Rect boss_picture = { frame_sprite_idle * 150, 0, 150, 150 };
-			 SDL_Rect boss_rect = { boss_x - cam.camera_x - 200, boss_y - cam.camera_y - 230, boss_w, boss_h };
-
-			 SDL_RenderCopy(render, sprite_boss_idle, &boss_picture, &boss_rect);
-		 }
-
-		 else {
-			 if (current_time - last_frame_boss > 90) {
-				 frame_sprite_boss_shot = (frame_sprite_boss_shot - 1);
-				 if (frame_sprite_boss_shot < 0) {
-					 frame_sprite_boss_shot = 8;
-				 }
-				 last_frame_boss = current_time;
-			 }
-			 SDL_Rect boss_picture = { frame_sprite_boss_shot * 150, 0, 150, 150 };
-			 SDL_Rect boss_rect = { boss_x - cam.camera_x - 200, boss_y - cam.camera_y - 230, boss_w, boss_h };
-
-			 SDL_RenderCopy(render, sprite_boss_attacking, &boss_picture, &boss_rect);
-		 }
-
-
-		 if (current_time - frame_bullet_time > 90) {
-			 frame_bullet_boss_shot = (frame_bullet_boss_shot + 1) % 3;
-			 frame_bullet_time = SDL_GetTicks();
-		 }
-
-		 // Vẽ đạn của boss
-		 for (auto& bullet : boss_bullets) {
-			 SDL_Rect bullet_rect = { bullet.bullet_x - cam.camera_x, bullet.bullet_y - cam.camera_y, 30, 30 };
-			 SDL_RenderCopy(render, sprite_bullet_boss[frame_bullet_boss_shot], NULL, &bullet_rect);
-		 }
-
-		 if (is_defending) {
-			 Uint32 current = SDL_GetTicks();
-			 if (current - time_frame_shiled > 40) {
-				 frame_boss_shield = (frame_boss_shield + 1) % 13;
-				 time_frame_shiled = SDL_GetTicks();
-			 }
-			 SDL_Rect boss_picture = { frame_boss_shield * 63, 0, 63, 63 };
-			 SDL_Rect boss_rect = { boss_x - cam.camera_x + 7 , boss_y - cam.camera_y + 30 , 300, 300 };
-			 SDL_RenderCopy(render, shield_boss, &boss_picture, &boss_rect);
-		 }
-	 }
 }
+
 
 
 

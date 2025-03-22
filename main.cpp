@@ -10,6 +10,7 @@
 #include"bullet.h"
 #include"boss.h"
 #include"sound.h"
+
 player p1;
 camera cam;
 attack at;
@@ -19,7 +20,6 @@ status_game status;
 bullet_manager bullets_sword;
 BOSS bigmonster;
 sound_manager sound;
-
 map mp;
 base background;
 base game_over_;
@@ -282,7 +282,7 @@ Uint32 time_goblin_run) {
 
             else {
                 Uint32 currentTime1 = SDL_GetTicks();
-                if (currentTime1 - enemy_g.attack_goblin_start >= 370) {
+                if (currentTime1 - enemy_g.attack_goblin_start >= 430) {
                     if (enemy_g.enemy_x - p1.player_x < 75 && enemy_g.enemy_x - p1.player_x >0 && enemy_g.direc_goblin_left && abs(enemy_g.enemy_y - p1.player_y) < 40) {
 
                         if (!p1.player_hit && !p1.charging) {
@@ -328,6 +328,7 @@ camera& cam,int frame_attack_goblin) {
     enemy_g.update(tile_map);
     enemy_g.update_bomb(tile_map, p1, cam, sound);
     enemy_g.render_bomb(render, cam, p1);
+
     if (!enemy_g.goblin_hit) {
         if (enemy_g.goblin == STANDUP && !enemy_g.enemy_attack_bomb) {
 
@@ -367,8 +368,7 @@ int main(int argc, char* argv[]) {
     bool isAttack = false;
     int frame_hit = 0;
     Uint32 attackStart = 0;
-    const Uint32 attacktime = 200;
-    Uint32 time_hit = 0;
+      Uint32 time_hit = 0;
 
     enemy enemy;
     BULLET sword_;

@@ -1,7 +1,5 @@
 ﻿#include"game status.h"
 
-
-
 bool status_game::load_button(SDL_Renderer* render) {
 	button_start = load_("picture/start_button1.png", render);
 	button_start2 = load_("picture/start_button2.png", render);
