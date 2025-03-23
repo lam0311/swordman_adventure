@@ -6,20 +6,47 @@ interface::interface() {
 	enegy_index = NULL;
 	apple_x = 18040;
 	apple_y = 290;
+	status_sound = true;
 	check_eat_apple = 0;
 	font = NULL;
 }
 interface::~interface() { ; }
 
 
-bool interface::blood_index(SDL_Renderer* render) {
+bool interface::load_picture(SDL_Renderer* render) {
 	health = Loadsprite("picture/Health.png", render);
 	enegy_index = Loadsprite("picture/thanh nang luong.png", render);
 	background_blood = Loadsprite("picture/blood_index.png", render);
 	support_player[0] = Loadsprite("picture/Food.png", render);
 	enegy_index2 = Loadsprite("picture/thanh no.png", render);
+	button_sound_on = Loadsprite("picture/music_on.png", render);
+	button_sound_off = Loadsprite("picture/music_off.png", render);
 
-	return health && enegy_index && background_blood && support_player[0] && enegy_index2;
+	return health && enegy_index && background_blood && support_player[0] && enegy_index2 && button_sound_off && button_sound_on;
+}
+
+
+void interface::render_button_sound(SDL_Renderer* render, camera cam, sound_manager& sound, status_game& status) {
+	SDL_Rect rect_sound = { 1200, 0, 50, 50 };
+	int mouse_x_new, mouse_y_new;
+	Uint32 mouse_state = SDL_GetMouseState(&mouse_x_new, &mouse_y_new);
+
+	if ((mouse_state & SDL_BUTTON(SDL_BUTTON_LEFT)) &&
+		mouse_x_new > rect_sound.x && mouse_x_new < rect_sound.x + rect_sound.w &&
+		mouse_y_new > rect_sound.y && mouse_y_new < rect_sound.y + rect_sound.h) {
+
+		status_sound = !status_sound; 
+		SDL_Delay(150);
+	}
+
+	if (status_sound) {
+		sound.play_game_start_sound();
+		SDL_RenderCopy(render,  button_sound_on, NULL, &rect_sound);
+	}
+	else {
+		sound.stop_game_start_sound();
+		SDL_RenderCopy(render, button_sound_off, NULL, &rect_sound);
+	}
 }
 
 

@@ -37,12 +37,18 @@ void attack::aminationattackright( SDL_Renderer* render, camera cam, player x,bo
     SDL_RenderCopy(render, sprite_attackright, &picture_rect, &rect);
 
     Uint32 currentTime = SDL_GetTicks();
-    if (currentTime - time_frame_attack > 30) {
+    if (currentTime - time_frame_attack > 20) {
         frame_attack = (frame_attack + 1) ;
         time_frame_attack = SDL_GetTicks();
     }
+
+    if (frame_attack >= attackFrame_trigger) {
+        is_Attacking_Animation_Done = true;
+    }
+
     if (frame_attack >= 7) {
         isattack = false;
+        is_Attacking_Animation_Done = true;
         frame_attack = 0;
     }
 }
@@ -53,13 +59,19 @@ void attack::aminationattackleft( SDL_Renderer* render, camera cam, player x,boo
     SDL_RenderCopy(render, sprite_attackleft, &picture_rect, &rect);
 
     Uint32 currentTime = SDL_GetTicks();
-    if (currentTime - time_frame_attack > 30) {
+    if (currentTime - time_frame_attack > 20) {
         frame_attack = (frame_attack + 1);
         time_frame_attack = SDL_GetTicks();
 
     }
+
+    if (frame_attack >= attackFrame_trigger) {
+        is_Attacking_Animation_Done = true;
+    }
+
     if (frame_attack >= 7) {
         isattack = false;
+        is_Attacking_Animation_Done = true;
         frame_attack = 0;
     }
 }

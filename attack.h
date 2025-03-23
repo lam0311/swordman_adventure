@@ -8,8 +8,10 @@ public:
 	vector<pair<int, int>> picture_2;
 	int frame_attack;
 	int frame_hit;
+	int attackFrame_trigger;
 	Uint32 time_frame_attack;
 	Uint32 time_frame_hit;
+	bool is_Attacking_Animation_Done;
 
 
 	attack() {
@@ -17,6 +19,8 @@ public:
 		frame_hit = 0;
 		time_frame_attack = 0;
 		time_frame_hit = 0;
+		attackFrame_trigger = 6;
+		is_Attacking_Animation_Done = false;
 	}
 	~attack() { ; }
 

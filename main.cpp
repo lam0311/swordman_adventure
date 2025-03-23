@@ -282,10 +282,10 @@ Uint32 time_goblin_run) {
 
             else {
                 Uint32 currentTime1 = SDL_GetTicks();
-                if (currentTime1 - enemy_g.attack_goblin_start >= 430) {
+                if (currentTime1 - enemy_g.attack_goblin_start >= 350) {
                     if (enemy_g.enemy_x - p1.player_x < 75 && enemy_g.enemy_x - p1.player_x >0 && enemy_g.direc_goblin_left && abs(enemy_g.enemy_y - p1.player_y) < 40) {
 
-                        if (!p1.player_hit && !p1.charging) {
+                        if (!p1.player_hit && !p1.charging&&at.is_Attacking_Animation_Done) {
                             p1.player_hit = true;
                             cam.start_shake(5, 200);
                             p1.player_hit_start = SDL_GetTicks();
@@ -298,7 +298,7 @@ Uint32 time_goblin_run) {
                         }
                     }
                     else if (enemy_g.enemy_x - p1.player_x > -75 && enemy_g.enemy_x - p1.player_x < 0 && enemy_g.direc_goblin_right && abs(enemy_g.enemy_y - p1.player_y) < 40) {
-                        if (!p1.player_hit && !p1.charging) {
+                        if (!p1.player_hit && !p1.charging&&at.is_Attacking_Animation_Done) {
                             p1.player_hit = true;
                             cam.start_shake(5, 200);
                             p1.player_hit_start = SDL_GetTicks();
@@ -390,7 +390,7 @@ int main(int argc, char* argv[]) {
     bool right = false, left = false;
     bool checkjump = false;
     bool direcright = false, direcleft = false;
-    bool hit = false;
+  
 
 
     // thời gian chạy frame di chuyển
@@ -398,7 +398,7 @@ int main(int argc, char* argv[]) {
     Uint32 time_goblin_run = 0;
 
     if (!setup() || !setbackground() || !stylemap() || !p1.spriterun(render) || !at.loadattack(render) || !enemy.amination_enemy_goblin(render)
-        || !inter.blood_index(render) || !sword_.animation_bullet(render) || !bigmonster.load_inmage_boss(render) || !status.load_button(render)
+        || !inter.load_picture(render) || !sword_.animation_bullet(render) || !bigmonster.load_inmage_boss(render) || !status.load_button(render)
         || !sound.load_sound_all()) {
         cout << SDL_GetError();
         return 1;
@@ -649,6 +649,7 @@ int main(int argc, char* argv[]) {
             inter.spamw_apple(render, cam);
             inter.position_blood_index(render, p1);
             inter.render_energy(render, p1);
+            inter.render_button_sound(render, cam, sound, status);
 
             // slow motion =================
             cam.update_slow_motion();

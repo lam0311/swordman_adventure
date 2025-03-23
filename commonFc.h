@@ -80,6 +80,8 @@ static SDL_Texture* button_back2 = NULL;
 static SDL_Texture* decore_player_menu = NULL;
 static SDL_Texture* decore_player_menu1 = NULL;
 static SDL_Texture* help_instruct = NULL;
+static SDL_Texture* button_sound_on = NULL;
+static SDL_Texture* button_sound_off = NULL;
 
 
 
