@@ -13,7 +13,9 @@ struct player {
 	int tileX;
 	int tileY;
 	float y_val;
-	int x_val;
+	int x_val; 
+	int dashDuration;
+	int dashSpeed;
 
 // biến kĩ năng đặc biệt============ 
 	int energy;
@@ -41,6 +43,7 @@ struct player {
 	bool can_use_special;
 	bool using_special;
 	bool charging;
+	bool isDashing;
 
 // biến thời gian điều chỉnh tốc độ======
 	Uint32 player_hit_start;
@@ -53,6 +56,8 @@ struct player {
     Uint32 charge_time ; 
 	Uint32 charge_time_frame;
 	Uint32 time_run;
+	Uint32 dashStartTime;
+	Uint32 reload_dash;
 
 
 	player();
@@ -62,6 +67,7 @@ struct player {
 		tileX = player_x / tile_block;
 		tileY = player_y / tile_block;
 	}
+	void update_dash(bool direcRight, bool direcLeft, const int tile_map[MAX_ROWS][MAX_COLS]);
 
 	void box(SDL_Renderer* render,camera cam);
 	SDL_Texture* Loadsprite(const char* path,SDL_Renderer* render);
@@ -71,6 +77,7 @@ struct player {
 
 	bool spriterun(SDL_Renderer* render);
 	void aminationrunright( SDL_Renderer* render, camera cam);
+	bool check_map_dash(const int tile_map[MAX_ROWS][MAX_COLS], bool direc_left, bool direc_right);
 	void aminationrunleft( SDL_Renderer* render, camera cam);
 	void Effect_apple_player(SDL_Renderer* render, camera cam);
 	void Effect_apple2_player(SDL_Renderer* render, camera cam);

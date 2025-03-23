@@ -414,7 +414,7 @@ int main(int argc, char* argv[]) {
             else if (e.type == SDL_KEYDOWN) {
                 switch (e.key.keysym.sym) {
 
-                case SDLK_RIGHT:
+                case SDLK_d:
                     right = true;
                     left = false;
                     direcright = true;
@@ -423,7 +423,7 @@ int main(int argc, char* argv[]) {
                     p1.x_val = VANTOC_PLAYER_X;
                     break;
 
-                case SDLK_LEFT:
+                case SDLK_a:
                     left = true;
                     right = false;
                     direcright = false;
@@ -432,7 +432,7 @@ int main(int argc, char* argv[]) {
                     p1.x_val = -VANTOC_PLAYER_X;
                     break;
 
-                case SDLK_UP:
+                case SDLK_w:
                     p1.jump();
                     p1.charging = false;
 
@@ -443,7 +443,14 @@ int main(int argc, char* argv[]) {
                         p1.charge_start = SDL_GetTicks();
                         p1.charging = true;
                         p1.charge_frame = 0;
+                    }
 
+                case SDLK_e:
+                    if (SDL_GetTicks() - p1.dashStartTime > p1.reload_dash) {
+                        if ((!p1.isDashing) && left || right) {
+                            p1.isDashing = true;
+                            p1.dashStartTime = SDL_GetTicks();
+                        }
                     }
                 }
 
@@ -497,11 +504,11 @@ int main(int argc, char* argv[]) {
 
             else if (e.type == SDL_KEYUP) {
                 switch (e.key.keysym.sym) {
-                case SDLK_RIGHT:
+                case SDLK_d:
                     right = false;
                     if (!right) p1.x_val = 0;
                     break;
-                case SDLK_LEFT:
+                case SDLK_a:
                     left = false;
                     if (!left) p1.x_val = 0;
                     break;
@@ -537,6 +544,7 @@ int main(int argc, char* argv[]) {
                     p1state = STAND;
                 }
             }
+           
 
         }
 
@@ -611,10 +619,12 @@ int main(int argc, char* argv[]) {
 
             cam.update_shake();
 
+
             effect_player_charging();
 
             p1.behavior_player( cam, render, left, right, direcleft, direcright, isAttack, at, sound, p1);
 
+            p1.update_dash(direcright, direcleft,mapArray);
 
 
             Uint32 goblin_frame_hit = 0;

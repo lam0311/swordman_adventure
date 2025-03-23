@@ -18,7 +18,11 @@ player::player() {
     player_died_time = 0;
     frame_player_idle = 0;
     time_player_idle = 0;
+    dashStartTime = 0;
+    dashDuration = 75;
+    dashSpeed = 15;
     time_run = 0;
+    reload_dash = 1000;
       last_special_attack = 0;
      frame_special_attack = 0;
     frame_special_attack1 = 0;
@@ -37,6 +41,7 @@ player::player() {
     player_died = false;
     player_hit = false;
     on_ground = false;
+    isDashing = false;
     charging = false;
 }
 
@@ -46,6 +51,8 @@ void player::box(SDL_Renderer* render,camera cam){
 }
 
 void player::aminationrunright( SDL_Renderer* render, camera cam) {
+
+
     if (SDL_GetTicks() - time_run > 40) {
         frame_run = (frame_run + 1) % 16;
         if (frame_run == 0) {
@@ -53,6 +60,17 @@ void player::aminationrunright( SDL_Renderer* render, camera cam) {
         }
         time_run = SDL_GetTicks();
     }
+
+    // làm mờ hình ảnh 
+    if (isDashing) {
+        SDL_SetTextureAlphaMod(sprite_runright[frame_run], 150); 
+        SDL_SetTextureAlphaMod(sprite_runleft[frame_run], 150);
+    }
+    else {
+        SDL_SetTextureAlphaMod(sprite_runright[frame_run], 255); 
+        SDL_SetTextureAlphaMod(sprite_runleft[frame_run], 255);
+    }
+
     if (on_ground) {
         SDL_Rect rect = { player_x - cam.camera_x,player_y - cam.camera_y,player_w,player_h };
         SDL_RenderCopy(render, sprite_runright[frame_run], NULL, &rect);
@@ -71,6 +89,17 @@ void player::aminationrunleft(SDL_Renderer* render, camera cam) {
         }
         time_run = SDL_GetTicks();
     }
+
+    // làm mờ hình ảnh 
+    if (isDashing) {
+        SDL_SetTextureAlphaMod(sprite_runright[frame_run], 150);
+        SDL_SetTextureAlphaMod(sprite_runleft[frame_run], 150);
+    }
+    else {
+        SDL_SetTextureAlphaMod(sprite_runright[frame_run], 255);
+        SDL_SetTextureAlphaMod(sprite_runleft[frame_run], 255);
+    }
+
     if (on_ground) {
         SDL_Rect rect = { player_x - cam.camera_x,player_y - cam.camera_y,player_w,player_h };
         SDL_RenderCopy(render, sprite_runleft[frame_run], NULL, &rect);
@@ -252,6 +281,7 @@ bool player::spriterun(SDL_Renderer* render) {
 
 void player::behavior_player( camera cam, SDL_Renderer* render, bool left, bool right,
     bool direcleft, bool direcright, bool &isattack, attack &at,sound_manager &sound,player &p1) {
+
     if ((right || left) && p1.on_ground) {
         sound.play_run_player_sound();
     }
@@ -396,6 +426,53 @@ void player::jump() {
     }
 }
 
+bool player::check_map_dash(const int tile_map[MAX_ROWS][MAX_COLS], bool direc_left,bool direc_right) {
+    int min_h = min(player_h, tile_block);
+    int min_w = min(player_w, tile_block);
+
+
+    int new_x = player_x + dashSpeed;
+    int x1 = new_x / tile_block;
+    int x2 = (new_x + player_w - 1) / tile_block;
+    int y1 = player_y / tile_block;
+    int y2 = (player_y + min_h - 1) / tile_block;
+
+    if (x1 >= 0 && x2 < MAX_COLS && y1 >= 0 && y2 < MAX_ROWS) {
+        if (direc_right) {
+            if ((tile_map[y1][x2] != 0 || tile_map[y2][x2] != 0) && (tile_map[y1][x2] != 3 || tile_map[y2][x2] != 3)) {
+                player_x = x2 * tile_block - player_w;
+                return false;
+            }
+        }
+        else if (direc_left) {
+            if ((tile_map[y1][x1] != 0 || tile_map[y2][x1] != 0) && (tile_map[y1][x1] != 3 || tile_map[y2][x1] != 3)) {
+                player_x = (x1 + 1) * tile_block;
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+void player::update_dash(bool direcRight,bool direcLeft, const int tile_map[MAX_ROWS][MAX_COLS]) {
+    if (isDashing) {
+        if (SDL_GetTicks() - dashStartTime < dashDuration) {
+
+            if (check_map_dash(tile_map,direcLeft,direcRight)) {
+                if (direcRight) player_x += dashSpeed;
+                if (direcLeft) player_x -= dashSpeed;
+            }
+            else {
+                isDashing = false;
+            }
+
+        }
+        else {
+            isDashing = false; 
+        }
+    }
+}
+
 void player::recharge(int index_energy) {
 	energy += index_energy;
 	if (energy >= max_energy) {
@@ -519,7 +596,6 @@ void player::using_attack_special_left(SDL_Renderer* render, camera cam) {
         }
     }
 }
-
 
 void camera::resetcam() {
     camera_x = 0;
