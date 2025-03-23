@@ -447,7 +447,7 @@ int main(int argc, char* argv[]) {
 
                 case SDLK_e:
                     if (SDL_GetTicks() - p1.dashStartTime > p1.reload_dash) {
-                        if ((!p1.isDashing) && left || right) {
+                        if (!p1.isDashing) {
                             p1.isDashing = true;
                             p1.dashStartTime = SDL_GetTicks();
                         }
@@ -625,7 +625,7 @@ int main(int argc, char* argv[]) {
             p1.behavior_player( cam, render, left, right, direcleft, direcright, isAttack, at, sound, p1);
 
             p1.update_dash(direcright, direcleft,mapArray);
-
+            p1.render_smoke(render,cam);
 
             Uint32 goblin_frame_hit = 0;
             for (int i = 0; i < 60; i++) {

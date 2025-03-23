@@ -19,10 +19,10 @@ player::player() {
     frame_player_idle = 0;
     time_player_idle = 0;
     dashStartTime = 0;
-    dashDuration = 75;
+    dashDuration = 140;
     dashSpeed = 15;
     time_run = 0;
-    reload_dash = 1000;
+    reload_dash =600;
       last_special_attack = 0;
      frame_special_attack = 0;
     frame_special_attack1 = 0;
@@ -269,6 +269,16 @@ bool player::spriterun(SDL_Renderer* render) {
 		cout << SDL_GetError();
 		return 0;
 	}
+    smoke_texture_left = Loadsprite("picture/smoke-left.png",render);
+    if (smoke_texture_left == NULL) {
+        cout << SDL_GetError();
+        return 0;
+    }
+    smoke_texture_right = Loadsprite("picture/smoke-right.png", render);
+    if (smoke_texture_right == NULL) {
+        cout << SDL_GetError();
+        return 0;
+    }
 
 
 
@@ -289,11 +299,11 @@ void player::behavior_player( camera cam, SDL_Renderer* render, bool left, bool 
         sound.stop_run_sound();
     }
 
-    if (right) {
+    if (right||(direcright&&isDashing)) {
         p1.aminationrunright(render, cam);
     }
 
-    else if (left) {
+    else if (left||(direcleft && isDashing)) {
         p1.aminationrunleft(render, cam);
     }
 
@@ -459,8 +469,30 @@ void player::update_dash(bool direcRight,bool direcLeft, const int tile_map[MAX_
         if (SDL_GetTicks() - dashStartTime < dashDuration) {
 
             if (check_map_dash(tile_map,direcLeft,direcRight)) {
-                if (direcRight) player_x += dashSpeed;
-                if (direcLeft) player_x -= dashSpeed;
+                if (direcRight) {
+
+                    smoke_effect smoke;
+                    smoke.smoke_x = player_x;
+                    smoke.smoke_y = player_y + player_h / 2;
+                    smoke.startTime_smoke = SDL_GetTicks();
+                    smoke.active_smoke = true;
+                    smoke.direc_right_smokef = true;
+                    smoke_effects.push_back(smoke);
+
+                    player_x += dashSpeed;
+                }
+                if (direcLeft) {
+
+                    smoke_effect smoke;
+                    smoke.smoke_x = player_x;
+                    smoke.smoke_y = player_y + player_h / 2;
+                    smoke.startTime_smoke = SDL_GetTicks();
+                    smoke.active_smoke = true;
+                    smoke.direc_right_smokef = false;
+                    smoke_effects.push_back(smoke);
+
+                    player_x -= dashSpeed;
+                }
             }
             else {
                 isDashing = false;
@@ -472,6 +504,35 @@ void player::update_dash(bool direcRight,bool direcLeft, const int tile_map[MAX_
         }
     }
 }
+
+void player::render_smoke(SDL_Renderer* render, camera cam) {
+    Uint32 currentTime = SDL_GetTicks();
+
+    for (auto& smoke : smoke_effects) {
+        if (!smoke.active_smoke) continue;
+
+      
+        if (currentTime - smoke.startTime_smoke > 200) {
+            smoke.active_smoke = false;
+        }
+
+        if (smoke.direc_right_smokef) {
+            SDL_Rect smoke_rect = { smoke.smoke_x - cam.camera_x, smoke.smoke_y - cam.camera_y, 40, 40 };
+            SDL_RenderCopy(render, smoke_texture_right, NULL, &smoke_rect);
+        }
+        else {
+            SDL_Rect smoke_rect = { smoke.smoke_x - cam.camera_x, smoke.smoke_y - cam.camera_y, 40, 40 };
+            SDL_RenderCopy(render, smoke_texture_left, NULL, &smoke_rect);
+        }
+    }
+
+    for (int i = smoke_effects.size() - 1; i >= 0; i--) {
+        if (!smoke_effects[i].active_smoke) {
+            smoke_effects.erase(smoke_effects.begin() + i);
+        }
+    }
+}
+
 
 void player::recharge(int index_energy) {
 	energy += index_energy;

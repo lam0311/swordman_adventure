@@ -36,6 +36,8 @@ static SDL_Texture* sprite_attack_special_right = NULL;
 static SDL_Texture* sprite_attack_special_left = NULL;
 static SDL_Texture* sprite_bullet_special_right = NULL;
 static SDL_Texture* sprite_bullet_special_left = NULL;
+static SDL_Texture* smoke_texture_left = NULL;
+static SDL_Texture* smoke_texture_right = NULL;
 
 // goblin
 static SDL_Texture* sprite_goblin_idle = NULL;

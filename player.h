@@ -2,6 +2,7 @@
 #include"commonFc.h"
 #include"sound.h"
 struct camera;
+struct smoke_effect;
 class attack;
 struct player {
 // tính chất nhân vật===============
@@ -59,6 +60,9 @@ struct player {
 	Uint32 dashStartTime;
 	Uint32 reload_dash;
 
+
+	vector<smoke_effect> smoke_effects;
+	void render_smoke(SDL_Renderer* render, camera cam);
 
 	player();
 
@@ -142,4 +146,9 @@ struct camera {
 };
 
 
-
+struct smoke_effect {
+	int smoke_x, smoke_y;
+	Uint32 startTime_smoke;
+	bool active_smoke;
+	bool direc_right_smokef = false;
+};
