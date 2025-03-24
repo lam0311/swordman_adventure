@@ -24,6 +24,7 @@
     <ProjectGuid>{8e5da25f-d2eb-45ae-9a85-9a5f5afdb3e7}</ProjectGuid>
     <RootNamespace>GAMELÀMNGHIÊMTÚC</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>swordman_adventure</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
