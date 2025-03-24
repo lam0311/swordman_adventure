@@ -41,10 +41,10 @@ chém khi khoảng cách đủ, rất nhiều cơ chế va chạm, tạo ra boss
 + mức độ dựa vào AI: Ban đầu xây dựng game khủng long mất mạng dựa vào AI, các nguồn trên yutube khá nhiều, không thể tự viết được, không biết code như nào. Sang game chính thì tất cả 10 ngón tay em tự code.
 + 1 só thuật toán va chạm map của nhân vật, class bullet thì xem trên yutube (https://www.youtube.com/watch?v=Heafds0qYRc&t=1707s), học trên video của cô (https://www.youtube.com/@tranthiminhchau9465), 1 số yutube nước ngoài (https://www.youtube.com/watch?v=iEn0ozP-jxc), (https://www.youtube.com/watch?v=NPdAQlsrOIY), các tutorial (https://www.youtube.com/watch?v=gOXg1ImX5j0&list=PLYmIsLVSssdIOn5J71CVBblPlXici1_2A).
 Check list:
-+  Tự làm mọi thứ, không copy từ phần nào, chỗ nào sai, hay chưa đúng thì hỏi AI chỉ lỗi và chỉnh sửa lại.
++  Tự làm, không copy từ phần nào, chỗ nào sai, hay chưa đúng thì hỏi AI chỉ lỗi và chỉnh sửa lại.
 +  em có ghi link tham khảo trên rồi.
 +  Dùng SDL_RenderCopy,SDL_RenderFillRect để vẽ các khối vuông để xử lí va chạm rồi xóa, dùng SDL_SetTextureAlphaMod để làm mờ các ảnh khi render ra.
-+  Dùng hơn 100 ảnh để xây dựng.
++  Dùng kha khá hơn 100 ảnh để xây dựng.
 +  background: không dùng background cuộn chuyển động do không phù hợp, có 5 back ground cho 5 trạng thái game.
 +  event bàn phím : space dùng chiêu đặc biệt, A sang trái ,D sang phải,W nhảy,E lướt.
 +  event chuột :  chuột trái tấn công, chuột phải dùng chiêu tấn công xa
