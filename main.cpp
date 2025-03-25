@@ -207,10 +207,14 @@ Uint32 goblin_frame_hit, bool isAttack, bool direcright, bool direcleft) {
     if (isAttack && direcright && g.enemy_x - p1.player_x < 80 && g.enemy_x - p1.player_x > 0 && abs(g.enemy_y - p1.player_y) < 40) {
         if (direcright) {
 
-            sound.play_goblin_hit_sound();
-            g.goblin_hit = true;
-            g.goblin_hit_start = SDL_GetTicks();
             if (g.goblin_hit_yes) {
+                sound.play_goblin_hit_sound();
+
+                g.goblin_hit = true;
+                g.goblin_hit_start = SDL_GetTicks();
+                g.isknocked_back = true;
+                g.knockback_val_x = g.knockback * (1);
+                cam.start_shake(5, 300);
                 g.goblin_heath -= 1;
                 p1.recharge(1);
             }
@@ -221,10 +225,14 @@ Uint32 goblin_frame_hit, bool isAttack, bool direcright, bool direcleft) {
 
     else if (isAttack && direcleft && g.enemy_x - p1.player_x > -80 && g.enemy_x - p1.player_x < 0 && abs(g.enemy_y - p1.player_y) < 40) {
         if (direcleft) {
-            sound.play_goblin_hit_sound();
-            g.goblin_hit = true;
-            g.goblin_hit_start = SDL_GetTicks();
+
             if (g.goblin_hit_yes) {
+                g.isknocked_back = true;
+                g.knockback_val_x = g.knockback * (-1);
+                sound.play_goblin_hit_sound();
+                g.goblin_hit = true;
+                g.goblin_hit_start = SDL_GetTicks();
+                cam.start_shake(5, 300);
                 g.goblin_heath -= 1;
                 p1.recharge(1);
             }
@@ -444,6 +452,7 @@ int main(int argc, char* argv[]) {
                         p1.charging = true;
                         p1.charge_frame = 0;
                     }
+                    break;
 
                 case SDLK_e:
                     if (SDL_GetTicks() - p1.dashStartTime > p1.reload_dash) {
@@ -452,6 +461,7 @@ int main(int argc, char* argv[]) {
                             p1.dashStartTime = SDL_GetTicks();
                         }
                     }
+                    break;
                 }
 
                 if (status.GO == GAME_VICTORY) {

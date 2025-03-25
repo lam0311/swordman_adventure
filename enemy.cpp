@@ -8,39 +8,43 @@ enemy::enemy() {
 	enemy_y_val = 0.0;
 	enemy_h = 70;
 	enemy_w = 70;
+    goblin_heath = 3;
+    hit_time = 0;
+    frame_goblin_idle = 0;
+    time_goblin_idle = 0;
     attack_goblin_start = 0;
+    goblin_hit_start = 0;
+    goblin_frame_died = 0;
+    frame_died_goblin = 0;
+    cooldown_bomb = 2000;
+    time_attak_bomb_start = 0;
+    frame_bomb_time = 0;
+    frame_goblin_bomb = 0;
+    frame_bomb1 = 0;
+    frame_bomb2 = 8;
+    frame_attack_goblin = 0;
+    attack_goblin_time = 0;
+    frame_run_goblin = 0;
+    knockback = 10;
+    knockback_val_x = 0;
+    run_goblin_time = 0;
+    frame_bomb_time_explore = 0;
+    isknocked_back = false;
     isattack_goblin = false;
     direc_goblin_left = true;
     direc_goblin_right = false;
 	enemy_on_ground = false;
-    goblin_heath = 3;
     goblin_dead = false;
     goblin_hit = false;
-    goblin_hit_start = 0;
-    goblin_frame_died = 0;
      kt_died_goblin = false;
-     frame_died_goblin = 0;
      prep_attack = false;
      enemy_hit_aim = false;
-      hit_time = 0;
-	  frame_goblin_idle = 0;
-	  time_goblin_idle = 0;
       enemy_attack_bomb = false;
-      cooldown_bomb = 2000;
-      time_attak_bomb_start = 0;
-      frame_bomb_time = 0;
-      frame_goblin_bomb = 0;
       is_attacking_bomb = false;
-      frame_bomb1 = 0;
-      frame_bomb2 = 8;
-      frame_bomb_time_explore = 0;
       bomb_thrown = false;
       goblin_hit_yes = false;
       goblin = STANDUP;
-      frame_attack_goblin = 0;
-      attack_goblin_time = 0;
-      frame_run_goblin = 0;
-      run_goblin_time = 0;
+
 
 }
 
@@ -51,16 +55,16 @@ void enemy::checkvar2(const int tile_map[MAX_ROWS][MAX_COLS]) {
 
     int new_y = enemy_y + enemy_y_val;
     int x1 = enemy_x / tile_block;
-    int x2 = (enemy_x + min_w -1) / tile_block;
+    int x2 = (enemy_x + min_w - 1) / tile_block;
     int y1 = new_y / tile_block;
     int y2 = (new_y + min_h - 1) / tile_block;
 
     if (x1 >= 0 && x2 < MAX_COLS && y1 >= 0 && y2 < MAX_ROWS) {
-       
+
         if (enemy_y_val > 0) {
             if (tile_map[y2][x1] != 0 || tile_map[y2][x2] != 0) {
-            
-                enemy_y = (y2) * tile_block - min_h;
+
+                enemy_y = (y2)*tile_block - min_h;
                 enemy_y_val = 0;
                 enemy_on_ground = true;
             }
@@ -68,16 +72,45 @@ void enemy::checkvar2(const int tile_map[MAX_ROWS][MAX_COLS]) {
                 enemy_on_ground = false;
             }
         }
-     
+
         else if (enemy_y_val < 0) {
             if (tile_map[y1][x1] != 0 || tile_map[y1][x2] != 0) {
-              
+
                 enemy_y = (y1 + 1) * tile_block;
                 enemy_y_val = 0;
             }
         }
     }
+
+    if (isknocked_back) {
+        int min_h = min(enemy_x, tile_block);
+        int min_w = min(enemy_y, tile_block);
+
+
+        int new_x = enemy_x + knockback_val_x;
+        int x1 = new_x / tile_block;
+        int x2 = (new_x + enemy_w - 1) / tile_block;
+        int y1 = enemy_y / tile_block;
+        int y2 = (enemy_y + min_h - 1) / tile_block;
+
+        if (x1 >= 0 && x2 < MAX_COLS && y1 >= 0 && y2 < MAX_ROWS) {
+            if (knockback_val_x > 0) {
+                if ((tile_map[y1][x2] != 0 || tile_map[y2][x2] != 0)) {
+                    enemy_x = x2 * tile_block - enemy_w;
+                    knockback_val_x = 0;
+                }
+            }
+            else if (knockback_val_x < 0) {
+                if ((tile_map[y1][x1] != 0 || tile_map[y2][x1] != 0)) {
+                    knockback = (x1 + 1) * tile_block;
+                    knockback_val_x = 0;
+                }
+            }
+        }
+    }
 }
+
+
 
 void enemy::update(const int tile_map[MAX_ROWS][MAX_COLS]) {
     if (!enemy_on_ground) {
@@ -86,7 +119,13 @@ void enemy::update(const int tile_map[MAX_ROWS][MAX_COLS]) {
             enemy_y_val = 6;
         }
     }
-
+    if (isknocked_back) {
+        enemy_x += knockback_val_x;
+        knockback_val_x *= 0.8; 
+        enemy_x_val = 0;
+        enemy_y_val = 0;
+        if (abs(knockback_val_x) < 1) isknocked_back = false; 
+    }
 
 	enemy_x += enemy_x_val;
 	enemy_y += enemy_y_val;

@@ -18,6 +18,8 @@ public:
 	int enemy_h;
 	int enemy_x_val;
 	float enemy_y_val;
+	int knockback;
+	float knockback_val_x;
 
 	// kiểm tra hành vi, vị trí =======
 	bool enemy_on_ground;
@@ -34,6 +36,7 @@ public:
 	bool enemy_hit_aim;
 	bool enemy_attack_bomb;
 	bool bomb_thrown;
+	bool isknocked_back;
 
 	// biến frame goblin ======
 	int frame_died_goblin;
