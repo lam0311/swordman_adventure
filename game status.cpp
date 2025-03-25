@@ -9,15 +9,18 @@ bool status_game::load_button(SDL_Renderer* render) {
 	button_help2 = load_("picture/help_button2.png", render);
 	decore_player_menu = load_("picture/player_IDLE_menu.png", render);
 	decore_player_menu1 = load_("picture/player_IDLE_menu1.png", render);
+	button_quit = load_("picture/button_quit.png", render);
+	button_resume = load_("picture/button_resume.png", render);
 
 	if (!button_start || !button_start2 || !button_exit || !button_exit2 || !button_help || !button_help2
-		|| !decore_player_menu || !decore_player_menu1) {
+		|| !decore_player_menu || !decore_player_menu1 || !button_resume || !button_quit) {
 		cout << SDL_GetError();
 		return false;
 	}
 	
 		return true;
 }
+
 
 void status_game::GAME_OVER(SDL_Renderer* render, base game_over, TTF_Font* font) {
 
@@ -62,7 +65,8 @@ void status_game::GAME_OVER(SDL_Renderer* render, base game_over, TTF_Font* font
 		mouse_y > menu.y && mouse_y < menu.y + menu.h) {
 		mouse_x = 0;
 		mouse_y = 0;
-		GO = MENU;
+		time_delay_menu = SDL_GetTicks();
+		is_change_menu = true;
 	}
 
     SDL_RenderPresent(render);
@@ -168,6 +172,44 @@ void status_game::GAME_MENU(SDL_Renderer* render, base game_menu,int &quit) {
 	SDL_RenderPresent(render);
 }
 
+
+void status_game::GAME_PAUSE(SDL_Renderer* render) {
+	// Làm tối màn hình
+	SDL_SetRenderDrawBlendMode(render, SDL_BLENDMODE_BLEND);
+	SDL_SetRenderDrawColor(render, 0, 0, 0, 150); 
+	SDL_Rect dark = { 0, 0, window_w, window_h };
+	SDL_RenderFillRect(render, &dark);
+
+	SDL_Texture* pause_texture = load_("picture/background_pause.png", render);
+	SDL_Rect pause = { (window_w - 400) / 2, (window_h - 250) / 2, 400, 250 };
+	SDL_RenderCopy(render, pause_texture, NULL, &pause);
+
+	SDL_Rect resume_rect = { pause.x+150, pause.y + 105, 120, 50 };
+	SDL_RenderCopy(render, button_resume, NULL, &resume_rect);
+
+	SDL_Rect quit_rect = { pause.x +150, pause.y + 155, 120, 50 };
+	SDL_RenderCopy(render, button_quit, NULL, &quit_rect);
+
+	int mouse_x, mouse_y;
+	SDL_GetMouseState(&mouse_x, &mouse_y);
+
+
+	if (mouse_x > resume_rect.x && mouse_x < resume_rect.x + resume_rect.w &&
+		mouse_y > resume_rect.y && mouse_y < resume_rect.y + resume_rect.h &&
+		SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+		GO = START;
+	}
+
+	if (mouse_x > quit_rect.x && mouse_x < quit_rect.x + quit_rect.w &&
+		mouse_y > quit_rect.y && mouse_y < quit_rect.y + quit_rect.h &&
+		SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+		time_delay_menu = SDL_GetTicks();
+		is_change_menu = true;
+	}
+
+	SDL_RenderPresent(render);
+}
+
 void status_game:: GAME_HELP(SDL_Renderer* render) {
 	
 	SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
@@ -194,7 +236,10 @@ void status_game:: GAME_HELP(SDL_Renderer* render) {
 	if (mouse_x > rect_back.x && mouse_x < rect_back.x + rect_back.w &&
 		mouse_y > rect_back.y && mouse_y < rect_back.y + rect_back.h) {
 		SDL_RenderCopy(render, button_back, NULL, &rect_back);
-		if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) GO = MENU;
+		if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+			time_delay_menu = SDL_GetTicks();
+			is_change_menu = true;
+		}
 	}
 	else {
 		SDL_RenderCopy(render, button_back2, NULL, &rect_back);

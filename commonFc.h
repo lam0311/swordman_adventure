@@ -84,6 +84,8 @@ static SDL_Texture* decore_player_menu1 = NULL;
 static SDL_Texture* help_instruct = NULL;
 static SDL_Texture* button_sound_on = NULL;
 static SDL_Texture* button_sound_off = NULL;
+static SDL_Texture* button_resume = NULL;
+static SDL_Texture* button_quit = NULL;
 
 
 
@@ -117,6 +119,7 @@ const int tile_block = 64;
 const int MAX_ROWS = 12;
 const int MAX_COLS = 460;
 const int VANTOC_PLAYER_X = 4;
+const Uint32 status_delay = 300;
 
 // biến hằng tính chất nhân vật 
 const int PLAYER_START_X = 15;
