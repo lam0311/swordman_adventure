@@ -128,3 +128,4 @@ const int PLAYER_MAX_HEALTH = 12;
 const int PLAYER_WEIGHT = 70;
 const int PLAYER_HEIGHT = 63;
 
+static SDL_Cursor* customCursor = NULL;

@@ -25,6 +25,22 @@ base background;
 base game_over_;
 base game_menu;
 
+bool SetCustomCursor() {
+    SDL_Surface* cursorSurface = IMG_Load("picture/mouse.png"); 
+    if (!cursorSurface) {
+        cout<< IMG_GetError();
+        return false;
+    }
+
+
+    customCursor = SDL_CreateColorCursor(cursorSurface, 0, 0);
+    SDL_SetCursor(customCursor); 
+
+    SDL_FreeSurface(cursorSurface);
+
+    return true;
+}
+
 bool setup() {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		cout << SDL_GetError();
@@ -423,7 +439,7 @@ int main(int argc, char* argv[]) {
 
     if (!setup() || !setbackground() || !stylemap() || !p1.spriterun(render) || !at.loadattack(render) || !enemy.amination_enemy_goblin(render)
         || !inter.load_picture(render) || !sword_.animation_bullet(render) || !bigmonster.load_inmage_boss(render) || !status.load_button(render)
-        || !sound.load_sound_all()) {
+        || !sound.load_sound_all()||!SetCustomCursor()) {
         cout << SDL_GetError();
         return 1;
     }
@@ -595,6 +611,8 @@ int main(int argc, char* argv[]) {
         p1.player_y += p1.y_val;
         cam.updateCamera(p1);
         check_change_status();
+
+        SDL_SetCursor(customCursor);
 
         SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
         SDL_RenderClear(render);
