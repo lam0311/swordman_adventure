@@ -26,11 +26,11 @@ Các lí do bảo vệ ngưỡng điểm đó:
 + Cơ chế dùng chiêu đặc biệt có thanh nộ trên đầu giữ phím đầy thanh nổ thì sài được chiêu, có cột hp và cột tích năng lượng để dùng chiêu đặc biệt.  
 
 +  các sự kiện phím mũi tên thay đổi vận tốc làm cho nhân vật di chuyển sang trái phải và nhảy lên, chuyển sang hoạt ảnh chém khi nhấn chuột trái, tạo ra class quái vật cơ chế đuổi theo nhân vật khi tới gần, tạo ra class đạn, ném bom từ xa
-chém khi khoảng cách đủ, rất nhiều cơ chế va chạm, tạo ra boss với 3 cơ chế bắn đạn khác nhau tùy từng giai đoạn.
+chém khi khoảng cách đủ, rất nhiều cơ chế va chạm, tạo ra boss với 3 cơ chế bắn đạn khác nhau tùy từng giai đoạn và cơ chế boss kích hoạt khiên khi bị tấn công 5 lần, khiên sẽ kích hoạt 4 giây rồi biến mất.
 
 + nhân vật có 3 chiêu khác nhau và chiêu lướt , quái có 2 chiêu và boss có 3 chiêu.
 
-+ có 5 màn hình : menu, help, start, victory, defeated.
++ có 6 màn hình : menu, help, start, victory, defeated, Pause.
 
 + Tính điểm và khi thắng hoặc thất bại điểm sẽ được công bố.
 
@@ -56,6 +56,7 @@ Check list:
 +  background music: có ở tất cả 5 trạng thái game.
 +  Font: dùng để làm tính kill và score.
 +  Menu: có menu.
++  Có thêm Pause và resume.
 +  Status bar / lives: có thêm cả thanh năng lượng và thanh nộ.
 +  Những điểm nổi bật em nói bên trên rồi, khả năng vẫn còn quên 1 số thứ, em trình bày lúc chấm bài sau.
 +  Em chưa học oop, cấp 3 chưa từng viết code nên code em có thể không xịn, gọn gàng dễ nâng cấp nhưng mỗi hàm thì không quá dài.
