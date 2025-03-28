@@ -15,6 +15,7 @@ player::player() {
     player_hit_start = 0;
     frame_effect_apple = 0;
     time_apple = 0;
+    time_apple2 = 0;
     player_died_time = 0;
     frame_player_idle = 0;
     time_player_idle = 0;
@@ -125,9 +126,9 @@ void player::Effect_apple_player(SDL_Renderer* render, camera cam) {
 
 void player::Effect_apple2_player(SDL_Renderer* render, camera cam) {
     Uint32 curent = SDL_GetTicks();
-    if (curent - time_apple >= 100) {
+    if (curent - time_apple2 >= 100) {
         frame_effect_apple = (frame_effect_apple + 1) % 4;
-        time_apple = SDL_GetTicks();
+        time_apple2 = SDL_GetTicks();
     }
 
 

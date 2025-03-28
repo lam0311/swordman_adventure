@@ -439,7 +439,7 @@ void enemy::followPlayer(player p1, const int tile_map[MAX_ROWS][MAX_COLS], SDL_
 
         if (!enemy_attack_bomb) {
             if (tile_map[foot_y][foot_x1] != 0 || tile_map[foot_y][foot_x2] != 0) {
-                if (abs(enemy_x - p1.player_x) < 350 && enemy_on_ground && abs(enemy_y - p1.player_y) <= tile_block ) {
+                if (abs(enemy_x - p1.player_x) < 350 && enemy_on_ground && abs(enemy_y - p1.player_y) <= 2*tile_block ) {
 
 
 

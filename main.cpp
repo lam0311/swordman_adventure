@@ -150,8 +150,7 @@ void resetgame() {
     cam.resetcam();
 }
 
-void effect_player_charging() {
-    sound.play_start_charge(p1.charging);
+void effect_apple_() {
     inter.check_eat_apple_(p1);
     if (inter.check_eat_apple) {
 
@@ -159,13 +158,6 @@ void effect_player_charging() {
         p1.Effect_apple2_player(render, cam);
         p1.Effect_apple_player(render, cam);
     }
-    if (p1.charging) {
-        p1.sprite_special_attack_behind(render, cam);
-    }
-    if (p1.charging) {
-        p1.sprite_special_attack_front(render, cam);
-    }
-    inter.render_energy2(render, p1, cam);
 }
 
 void resuilt_game() {
@@ -668,7 +660,7 @@ int main(int argc, char* argv[]) {
         }
 
         else if (status.GO == START) {
-
+            // nhac game ==========
             sound.play_game_start_sound();
             background.positionimg(render, NULL);
             mp.rendermap(render, cam);
@@ -676,17 +668,37 @@ int main(int argc, char* argv[]) {
                 sound.check_sound_player_attack = false;
                 sound.play_attack_sound();
             }
-
+            // rung cam ===========
             cam.update_shake();
 
+            // hiệu ứng ăn táo =============
+            inter.check_eat_apple_(p1);
+            if (inter.check_eat_apple) {
+                sound.play_effect_apple_sound();
+                p1.Effect_apple2_player(render, cam);
+                p1.Effect_apple_player(render, cam);
+            }
 
-            effect_player_charging();
-
+            // hiệu ứng giữ nộ =============
+            sound.play_start_charge(p1.charging);
+            if (p1.charging) {
+                p1.sprite_special_attack_behind(render, cam);
+            }
+            
+            inter.render_energy2(render, p1, cam);
+            
             p1.behavior_player(cam, render, left, right, direcleft, direcright, isAttack, at, sound, p1);
 
+            // hiệu ứng giữ nộ =============
+            if (p1.charging) {
+                p1.sprite_special_attack_front(render, cam);
+            }
+
+            // dash =============
             p1.update_dash(direcright, direcleft, mapArray);
             p1.render_smoke(render, cam);
 
+            
             Uint32 goblin_frame_hit = 0;
             for (int i = 0; i < 60; i++) {
                 if (goblin_enemy[i].goblin_dead) {

@@ -49,6 +49,7 @@ struct player {
 // biến thời gian điều chỉnh tốc độ======
 	Uint32 player_hit_start;
 	Uint32 time_apple;
+	Uint32 time_apple2;
 	Uint32 player_died_time;
 	Uint32 time_player_idle;  
 	Uint32 last_special_attack;
