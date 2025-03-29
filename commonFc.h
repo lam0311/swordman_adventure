@@ -119,13 +119,25 @@ const int tile_block = 64;
 const int MAX_ROWS = 12;
 const int MAX_COLS = 460;
 const int VANTOC_PLAYER_X = 4;
+const int APPLE_X = 18040;
+const int APPLE_Y = 290;
 const Uint32 status_delay = 300;
 
 // biến hằng tính chất nhân vật 
-const int PLAYER_START_X = 15;
+const int PLAYER_START_X = 16000;
 const int PLAYER_START_Y = 15;
 const int PLAYER_MAX_HEALTH = 12;
 const int PLAYER_WEIGHT = 70;
 const int PLAYER_HEIGHT = 63;
+const int vector_y = 1;
+
+// biến hằng tính chất enemy
+const int GOBLIN_HEALTH = 3;
+const int BOSS_HEALTH = 20;
+const int GOBLIN_W = 70;
+const int GOBLIN_H = 70;
+const int KNOCKBACK = 10;
+const int  COOLDOWN_BOMB = 2000;
+
 
 static SDL_Cursor* customCursor = NULL;

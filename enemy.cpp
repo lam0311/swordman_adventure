@@ -6,9 +6,9 @@ enemy::enemy() {
 	enemy_y = 0;
 	enemy_x_val = 0;
 	enemy_y_val = 0.0;
-	enemy_h = 70;
-	enemy_w = 70;
-    goblin_heath = 3;
+	enemy_h = GOBLIN_H;
+	enemy_w = GOBLIN_W;
+    goblin_heath = GOBLIN_HEALTH;
     hit_time = 0;
     frame_goblin_idle = 0;
     time_goblin_idle = 0;
@@ -16,7 +16,7 @@ enemy::enemy() {
     goblin_hit_start = 0;
     goblin_frame_died = 0;
     frame_died_goblin = 0;
-    cooldown_bomb = 2000;
+    cooldown_bomb = COOLDOWN_BOMB;
     time_attak_bomb_start = 0;
     frame_bomb_time = 0;
     frame_goblin_bomb = 0;
@@ -25,7 +25,7 @@ enemy::enemy() {
     frame_attack_goblin = 0;
     attack_goblin_time = 0;
     frame_run_goblin = 0;
-    knockback = 10;
+    knockback = KNOCKBACK;
     knockback_val_x = 0;
     run_goblin_time = 0;
     frame_bomb_time_explore = 0;
@@ -337,7 +337,6 @@ void enemy::sprite_bomb_right(SDL_Renderer* render, camera& cam,BULLET &bomb) {
         if (current_time - frame_bomb_time_explore > 100 && frame_bomb1 < 8) {
             frame_bomb1 = frame_bomb1 + 1;
             frame_bomb_time_explore += 200;
-
         }
 
         SDL_Rect rect_picture = {frame_bomb1*100,0,100,100 };
@@ -397,15 +396,42 @@ void enemy::enemy_goblin_health(SDL_Renderer* render, camera& cam) {
     SDL_RenderCopy(render, goblin_index_health, NULL, &rect);
 }
 
+void enemy::check_bomb(player p1) {
+    int dx = abs(p1.player_x - enemy_x);
 
+    if (dx <= 500 && SDL_GetTicks() - time_attak_bomb_start > cooldown_bomb && dx >= 350 && !goblin_hit) {
+        throw_bomb(p1);
+    }
+
+    if (goblin_hit && enemy_attack_bomb) {
+        enemy_attack_bomb = false;
+    }
+}
+
+void enemy::throw_bomb(player p1) {
+    enemy_attack_bomb = true;
+    time_attak_bomb_start = SDL_GetTicks();
+    frame_goblin_bomb = 0;
+    goblin = ATTACK_BOMB;
+
+    if (enemy_x < p1.player_x) {
+        direc_goblin_right = true;
+        direc_goblin_left = false;
+    }
+    else {
+        direc_goblin_left = true;
+        direc_goblin_right = false;
+    }
+
+    enemy_x_val = 0;
+    enemy_y_val = 0;
+}
 
 void enemy::followPlayer(player p1, const int tile_map[MAX_ROWS][MAX_COLS], SDL_Renderer* render, camera cam) {
-  
     enemy_y_val += 0.6;
     if (enemy_y_val > 6) {
         enemy_y_val = 6;
     }
-
   
     int foot_new = enemy_x + enemy_x_val;
     int foot_x1 = foot_new / tile_block;
@@ -413,74 +439,47 @@ void enemy::followPlayer(player p1, const int tile_map[MAX_ROWS][MAX_COLS], SDL_
     int foot_y = (enemy_y + enemy_h) / tile_block;
 
     if (foot_x1 >= 0 && foot_x2 < MAX_COLS && foot_y < MAX_ROWS) {
-
-        int dx = abs(p1.player_x - enemy_x);
-        if (dx <= 500 && SDL_GetTicks() - time_attak_bomb_start > cooldown_bomb && dx >= 350&&!goblin_hit) {
-            enemy_attack_bomb = true;
-            time_attak_bomb_start = SDL_GetTicks();
-            frame_goblin_bomb = 0;
-            goblin = ATTACK_BOMB;
-            if (enemy_x < p1.player_x) {
-                direc_goblin_right = true;
-                direc_goblin_left = false;
-            }
-            else {
-                direc_goblin_left = true;
-                direc_goblin_right = false;
-            }
-            enemy_x_val = 0;
-            enemy_y_val = 0;
-        }
+        check_bomb(p1);
 
         if (goblin_hit && enemy_attack_bomb) {
             enemy_attack_bomb = false; 
         }
 
-
         if (!enemy_attack_bomb) {
+
             if (tile_map[foot_y][foot_x1] != 0 || tile_map[foot_y][foot_x2] != 0) {
                 if (abs(enemy_x - p1.player_x) < 350 && enemy_on_ground && abs(enemy_y - p1.player_y) <= 2*tile_block ) {
-
-
 
                     if (abs(enemy_x - p1.player_x)<75) {
                         enemy_x_val = 0;
                         goblin = ATTACK_GOBLIN;
-
                         isattack_goblin = true;
-
                     }
                     else if (enemy_x < p1.player_x) {
                         enemy_x_val = 2;
                         goblin = RUNRIGHT;
-                        direc_goblin_right = true;
-                        direc_goblin_left = false;
+                        direc_goblin_left = false; direc_goblin_right = true;
                     }
                     else {
                         goblin = RUNLEFT;
                         enemy_x_val = -2;
-                        direc_goblin_left = true;
-                        direc_goblin_right = false;
+                        direc_goblin_left = true; direc_goblin_right = false;
                     }
                 }
                 else {
-                    enemy_x_val = 0;
-                    goblin = STANDUP;
+                    enemy_x_val = 0; goblin = STANDUP;
                 }
             }
             else {
-                goblin = STANDUP;
-                enemy_x_val = 0;
+                enemy_x_val = 0; goblin = STANDUP;
             }
         }
     }
     else {
-        goblin = STANDUP;
-        enemy_x_val = 0;
+        enemy_x_val = 0; goblin = STANDUP;
     }
 
-    enemy_x += enemy_x_val;
-    enemy_y += enemy_y_val;
+    enemy_x += enemy_x_val; enemy_y += enemy_y_val;
 
     checkvar2(tile_map);
 }

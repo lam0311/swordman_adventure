@@ -226,67 +226,28 @@ bool player::spriterun(SDL_Renderer* render) {
         }
     }
 
-	idle_left = Loadsprite("picture/player_IDLE_menu1.png", render);    
-	if (idle_left == NULL) {
-		cout << SDL_GetError();
-		return 0;
-	}
-	idle_right = Loadsprite("picture/player_IDLE_menu.png", render);
-	if (idle_right == NULL) {
-		cout << SDL_GetError();
-		return 0;
-	}
-
-
-
-	effect_attack_special[0] = Loadsprite("picture/effect_attack_special.png", render);
-	if (effect_attack_special[0] == NULL) {
-		cout << SDL_GetError();
-		return 0;
-	}
-	effect_attack_special[1] = Loadsprite("picture/effect1_attack_special.png", render);
-	if (effect_attack_special[1] == NULL) {
-		cout << SDL_GetError();
-		return 0;
-	}
-	effect_attack_special[2] = Loadsprite("picture/effect2_attack_special.png", render);
-	if (effect_attack_special[2] == NULL) {
-		cout << SDL_GetError();
-		return 0;
-	}
-	effect_attack_special[3] = Loadsprite("picture/effect3_attack_special.png", render);
-	if (effect_attack_special[3] == NULL) {
-		cout << SDL_GetError();
-		return 0;
-	}
-
-	sprite_attack_special_right = Loadsprite("picture/ATTACK_special_right.png", render);
-	if (sprite_attack_special_right == NULL) {
-		cout << SDL_GetError();
-		return 0;
-	}
-	sprite_attack_special_left = Loadsprite("picture/ATTACK_special_left.png", render);
-	if (sprite_attack_special_left == NULL) {
-		cout << SDL_GetError();
-		return 0;
-	}
-    smoke_texture_left = Loadsprite("picture/smoke-left.png",render);
-    if (smoke_texture_left == NULL) {
-        cout << SDL_GetError();
-        return 0;
-    }
+    idle_left = Loadsprite("picture/player_IDLE_menu1.png", render);
+    idle_right = Loadsprite("picture/player_IDLE_menu.png", render);
+    effect_attack_special[0] = Loadsprite("picture/effect_attack_special.png", render);
+    effect_attack_special[1] = Loadsprite("picture/effect1_attack_special.png", render);
+    effect_attack_special[2] = Loadsprite("picture/effect2_attack_special.png", render);
+    effect_attack_special[3] = Loadsprite("picture/effect3_attack_special.png", render);
+    sprite_attack_special_right = Loadsprite("picture/ATTACK_special_right.png", render);
+    sprite_attack_special_left = Loadsprite("picture/ATTACK_special_left.png", render);
+    smoke_texture_left = Loadsprite("picture/smoke-left.png", render);
     smoke_texture_right = Loadsprite("picture/smoke-right.png", render);
-    if (smoke_texture_right == NULL) {
-        cout << SDL_GetError();
+
+    if (!idle_left || !idle_right ||
+        !effect_attack_special[0] || !effect_attack_special[1] ||
+        !effect_attack_special[2] || !effect_attack_special[3] ||
+        !sprite_attack_special_right || !sprite_attack_special_left ||
+        !smoke_texture_left || !smoke_texture_right) {
+
+        cout << SDL_GetError() << endl;
         return 0;
     }
-
-
-
-
 	return 1;
 }
-
 
 
 
@@ -340,7 +301,6 @@ void player::behavior_player( camera cam, SDL_Renderer* render, bool left, bool 
             p1.using_attack_special_left(render, cam);
         }
     }
-
     else {
         if (direcright) {
             p1.render_player_idle_right(render, cam);
@@ -358,8 +318,6 @@ void player::behavior_player( camera cam, SDL_Renderer* render, bool left, bool 
 void player::checkvar(const int tile_map[MAX_ROWS][MAX_COLS]) {
     int min_h = min(player_h, tile_block);
     int min_w = min(player_w, tile_block);
-
-  
     int new_x = player_x + x_val;
     int x1 = new_x / tile_block;
     int x2 = (new_x + player_w - 1) / tile_block;
@@ -387,7 +345,6 @@ void player::checkvar(const int tile_map[MAX_ROWS][MAX_COLS]) {
         }
     }
 
-  
     int new_y = player_y + y_val;
     x1 = player_x / tile_block;
     x2 = (player_x + min_w - 1) / tile_block;
@@ -417,7 +374,6 @@ void player::checkvar(const int tile_map[MAX_ROWS][MAX_COLS]) {
         }
     }
 
-   
     if (player_x < 0) player_x = 0;
     else if (player_x + player_w > MAX_COLS * tile_block) player_x = MAX_COLS * tile_block - player_w;
 

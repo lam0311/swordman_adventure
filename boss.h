@@ -57,7 +57,7 @@ public:
 		boss_y = 20;
 		boss_w = 700;
 		boss_h = 800;
-		boss_health = 20;
+		boss_health =BOSS_HEALTH;
 		last_shot_time = 0;
 		shot_range = 1300;
 		frame_sprite_boss_shot = 8;

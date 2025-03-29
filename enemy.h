@@ -73,6 +73,10 @@ public:
 	void update(const int tile_map[MAX_ROWS][MAX_COLS]);
 
 
+	void check_bomb(player p1);
+
+	void throw_bomb(player p1);
+
 	void followPlayer(player p1, const int tile_map[MAX_ROWS][MAX_COLS], SDL_Renderer* render, camera cam);
 	
 	bool amination_enemy_goblin(SDL_Renderer* render);

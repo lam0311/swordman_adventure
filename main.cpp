@@ -107,13 +107,13 @@ void resetgame() {
     p1.player_died = false;
     p1.player_hit = false;
     at.frame_hit = 0;
-    bigmonster.boss_health = 20;
+    bigmonster.boss_health = BOSS_HEALTH;
 	bigmonster.check_boss_died = false;
 	bigmonster.boss_hit = false;
 	bigmonster.atacking = false;
 	inter.check_eat_apple = 0;
-	inter.apple_x = 18040;
-	inter.apple_y = 290;
+	inter.apple_x = APPLE_X;
+	inter.apple_y = APPLE_Y;
     status.kill_count = 0;
     
     status.score = 0;
@@ -125,7 +125,7 @@ void resetgame() {
     for (int i = 0; i < 37; i++) {
         goblin_enemy[i].enemy_x = 600 + 700 * i;
         goblin_enemy[i].enemy_y = 40;
-        goblin_enemy[i].goblin_heath = 3;
+        goblin_enemy[i].goblin_heath = GOBLIN_HEALTH;
         goblin_enemy[i].goblin_dead = false;
         goblin_enemy[i].kt_died_goblin = false;
         goblin_enemy[i].goblin_hit = false;
@@ -138,7 +138,7 @@ void resetgame() {
     for (int i = 37; i < 60; i++) {
         goblin_enemy[i].enemy_x = 600 + 800 * (i - 37);
         goblin_enemy[i].enemy_y = 40;
-        goblin_enemy[i].goblin_heath = 3;
+        goblin_enemy[i].goblin_heath = GOBLIN_HEALTH;
         goblin_enemy[i].goblin_dead = false;
         goblin_enemy[i].kt_died_goblin = false;
         goblin_enemy[i].goblin_hit = false;
@@ -168,7 +168,7 @@ void resuilt_game() {
     }
 }
 
-void handleGoblinDeath(enemy& goblin_enemy, SDL_Renderer* render, camera& cam) {
+void handleGoblin_Death(enemy& goblin_enemy, SDL_Renderer* render, camera& cam) {
 
     if (goblin_enemy.goblin_dead) {
         if (!goblin_enemy.kt_died_goblin) {
@@ -202,7 +202,7 @@ void handleGoblinDeath(enemy& goblin_enemy, SDL_Renderer* render, camera& cam) {
     }
 }
 
-void handleGoblinHit(enemy& g, SDL_Renderer* render, camera& cam, status_game& status, sound_manager& sound,int &frame_hit,
+void handleGoblin_Hit(enemy& g, SDL_Renderer* render, camera& cam, status_game& status, sound_manager& sound,int &frame_hit,
 Uint32 goblin_frame_hit, bool isAttack, bool direcright, bool direcleft) {
     if (isAttack && direcright && g.enemy_x - p1.player_x < 80 && g.enemy_x - p1.player_x > 0 && abs(g.enemy_y - p1.player_y) < 40) {
         if (direcright) {
@@ -274,7 +274,7 @@ Uint32 goblin_frame_hit, bool isAttack, bool direcright, bool direcleft) {
     }
 }
 
-void checkPlayerhit(enemy& enemy_g, player& p1, sound_manager& sound, status_game& status, bool isAttack, bool direcright, bool direcleft,Uint32 attack_goblin_time_,
+void checkPlayer_hit(enemy& enemy_g, player& p1, sound_manager& sound, status_game& status, bool isAttack, bool direcright, bool direcleft,Uint32 attack_goblin_time_,
 Uint32 time_goblin_run) {
     if (enemy_g.isattack_goblin) {
         Uint32 currentTime = SDL_GetTicks();
@@ -329,7 +329,7 @@ Uint32 time_goblin_run) {
     }
 }
 
-void handleGoblinAI(enemy& enemy_g, player& p1, const int tile_map[MAX_ROWS][MAX_COLS], SDL_Renderer* render,
+void handleGoblin_AI(enemy& enemy_g, player& p1, const int tile_map[MAX_ROWS][MAX_COLS], SDL_Renderer* render,
 camera& cam,int frame_attack_goblin) {
 
     enemy_g.followPlayer(p1, tile_map, render, cam);
@@ -361,7 +361,7 @@ camera& cam,int frame_attack_goblin) {
     }
 }
 
-void check_change_status() {
+void checkChange_status() {
     if (SDL_GetTicks() - status.time_delay_pause > status_delay&&status.is_change_pause) {
         status.GO = PAUSE;
         status.is_change_pause = false;
@@ -379,22 +379,256 @@ void check_change_status() {
 }
 
 
+void handleKey_Down(SDL_Event& e,bool &right,bool &left,bool &direcright,bool &direcleft) {
+    switch (e.key.keysym.sym) {
+    case SDLK_d:
+        right = true; left = false;
+        direcright = true; direcleft = false;
+        p1.charging = false;
+        p1.x_val = VANTOC_PLAYER_X;
+        break;
+
+    case SDLK_a:
+        left = true; right = false;
+        direcright = false; direcleft = true;
+        p1.charging = false;
+        p1.x_val = -VANTOC_PLAYER_X;
+        break;
+
+    case SDLK_w:
+        p1.jump();
+        p1.charging = false;
+        break;
+
+    case SDLK_SPACE:
+        if (!p1.charging && p1.can_use_special) {
+            p1.charge_start = SDL_GetTicks();
+            p1.charging = true;
+            p1.charge_frame = 0;
+        }
+        break;
+
+    case SDLK_e:
+        if (SDL_GetTicks() - p1.dashStartTime > p1.reload_dash && !p1.isDashing) {
+            p1.isDashing = true;
+            p1.dashStartTime = SDL_GetTicks();
+        }
+        break;
+
+    case SDLK_ESCAPE:
+        status.time_delay_pause = SDL_GetTicks();
+        status.is_change_pause = true;
+        break;
+    }
+
+    if (status.GO == GAME_VICTORY) {
+        if (e.key.keysym.sym == SDLK_RETURN) {
+            resetgame();
+            status.GO = MENU;
+
+        }
+    }
+}
+
+void handleKey_Up(SDL_Event& e, bool &right, bool &left, bool &direcright, bool &direcleft, playerstate &p1state) {
+    switch (e.key.keysym.sym) {
+    case SDLK_d:
+        right = false;
+        if (!right) p1.x_val = 0;
+        break;
+    case SDLK_a:
+        left = false;
+        if (!left) p1.x_val = 0;
+        break;
+    case SDLK_SPACE:
+        if (p1.charging) {
+            Uint32 current_time = SDL_GetTicks();
+            if (current_time - p1.charge_start >= p1.charge_time) {
+                p1.using_special = true;
+                int check_direc = direcleft ? -1 : 1;
+                int x = direcleft ? -10 : -100;
+                bullets_sword.add_bullet_special(p1.player_x + x, p1.player_y - 50, check_direc, sound);
+                p1.special_attack_frame = 4;
+                p1.energy = 0;
+                p1.can_use_special = false;
+                cam.start_shake(10, 400);
+                cam.start_slow_motion(600);
+            }
+            p1.charging = false;
+        }
+        break;
+    }
+
+    if (!left && !right) {
+        p1state = STAND;
+    }
+}
+
+void handleMouse_Down(SDL_Event& e, Uint32 &attackStart, bool &isAttack,bool &direcleft,bool &right,bool &left) {
+    Uint32 delay_attack = SDL_GetTicks();
+    if (e.button.button == SDL_BUTTON_LEFT && !right && !left && delay_attack - attackStart >= 400) {
+        if (status.GO == START) sound.check_sound_player_attack = true;
+        isAttack = true;
+        attackStart = SDL_GetTicks();
+        for (int i = 0; i < 60; i++) goblin_enemy[i].goblin_hit_yes = true;
+    }
+    else if (e.button.button == SDL_BUTTON_RIGHT && delay_attack - attackStart >= 600 && inter.check_eat_apple) {
+        isAttack = true;
+        attackStart = SDL_GetTicks();
+        for (int i = 0; i < 60; i++) goblin_enemy[i].goblin_hit_yes = true;
+        sound.play_attack_apple_sound();
+        int check_direc = direcleft ? -1 : 1;
+        bullets_sword.add_bullet(p1.player_x + 20, p1.player_y + 2, check_direc);
+    }
+
+    SDL_GetMouseState(&status.mouse_x, &status.mouse_y);
+}
+
+void handle_Menu(SDL_Renderer* render,bool &direcright,bool &isAttack,int &quit) {
+    sound.play_game_menu_sound();
+    status.GAME_MENU(render, game_menu, quit);
+    if (status.GO == START) {
+        sound.stop_game_menu_sound();
+        resetgame();
+        direcright = true;
+        isAttack = false;
+    }
+}
+
+void handle_Help(SDL_Renderer* render) {
+    status.GAME_HELP(render);
+}
+
+void handleGame_Over(SDL_Renderer* render,bool &direcright,bool &isAttack) {
+    sound.stop_game_start_sound();
+    sound.stop_run_sound();
+    Uint32 currentTime = SDL_GetTicks();
+    if (currentTime - p1.player_died_time > 1000) {
+        status.GAME_OVER(render, game_over_, inter.font);
+        if (status.GO == START_AGAIN) {
+            resetgame();
+            status.GO = START;
+            direcright = true;
+            isAttack = false;
+        }
+        if (status.GO == MENU) {
+            resetgame();
+        }
+    }
+}
+
+void handle_Victory(SDL_Renderer* render) {
+    sound.stop_game_start_sound();
+    status.GAME_VICTORY_(render, inter.font);
+}
+
+void handle_Pause(SDL_Renderer* render, const int mapArray[MAX_ROWS][MAX_COLS]) {
+    background.positionimg(render, NULL);
+    mp.rendermap(render, cam);
+    for (int i = 0; i < 60; i++) {
+        goblin_enemy[i].update(mapArray);
+        goblin_enemy[i].sprite_enemy_goblin_idle_left(render, cam);
+    }
+    status.GAME_PAUSE(render);
+}
+
+void handleGameLoop(SDL_Renderer* render,bool &direcleft,bool &direcright,bool &isAttack, const int mapArray[MAX_ROWS][MAX_COLS],Uint32 & attack_goblin_time_
+,Uint32 & time_goblin_run,int &frame_hit,int &frame_goblin_run,bool &left,bool &right) {
+    // nhac game ==========
+    sound.play_game_start_sound();
+    background.positionimg(render, NULL);
+    mp.rendermap(render, cam);
+    if (sound.check_sound_player_attack) {
+        sound.check_sound_player_attack = false;
+        sound.play_attack_sound();
+    }
+    // rung cam ===========
+    cam.update_shake();
+
+    // hiệu ứng ăn táo =============
+    inter.check_eat_apple_(p1);
+    if (inter.check_eat_apple) {
+        sound.play_effect_apple_sound();
+        p1.Effect_apple2_player(render, cam);
+        p1.Effect_apple_player(render, cam);
+    }
+
+    // hiệu ứng giữ nộ =============
+    sound.play_start_charge(p1.charging);
+    if (p1.charging) {
+        p1.sprite_special_attack_behind(render, cam);
+    }
+
+    inter.render_energy2(render, p1, cam);
+
+    p1.behavior_player(cam, render, left, right, direcleft, direcright, isAttack, at, sound, p1);
+
+    // hiệu ứng giữ nộ =============
+    if (p1.charging) {
+        p1.sprite_special_attack_front(render, cam);
+    }
+
+    // dash =============
+    p1.update_dash(direcright, direcleft, mapArray);
+    p1.render_smoke(render, cam);
+
+    Uint32 goblin_frame_hit = 0;
+    for (int i = 0; i < 60; i++) {
+        if (goblin_enemy[i].goblin_dead) {
+            handleGoblin_Death(goblin_enemy[i], render, cam);
+            continue;
+        }
+
+        checkPlayer_hit(goblin_enemy[i], p1, sound, status, isAttack, direcright, direcleft, attack_goblin_time_, time_goblin_run);
+
+        handleGoblin_Hit(goblin_enemy[i], render, cam, status, sound, frame_hit, goblin_frame_hit, isAttack, direcright, direcleft);
+        handleGoblin_AI(goblin_enemy[i], p1, mapArray, render, cam, frame_goblin_run);
+
+    }
+
+    resuilt_game();
+    inter.render_kill_count(render, status.kill_count, status.score);
+
+
+    //boss ==================
+    bigmonster.check_boss_hit_attack(bullets_sword, p1, cam, sound, status, at);
+    bigmonster.boss_update(p1, cam, sound);
+    bigmonster.spawn_boss(render, cam, p1);
+
+    // kĩ năng chuột phải ==============
+    bullets_sword.bullets_attack(render, p1, cam);
+    bullets_sword.update_bullet(cam, goblin_enemy, p1, sound, status);
+    bullets_sword.bullet_gun_hit(render, cam, goblin_enemy);
+
+    // render giao diện màn hình nhân vật ==========
+    inter.spamw_apple(render, cam);
+    inter.position_blood_index(render, p1);
+    inter.render_energy(render, p1);
+    inter.render_button_sound(render, cam, sound, status);
+
+    // slow motion =================
+    cam.update_slow_motion();
+
+    SDL_RenderPresent(render);
+
+    SDL_Delay(16);
+
+    if (cam.is_slow_motion) {
+        SDL_Delay(48);
+    }
+}
+
+
 
 int main(int argc, char* argv[]) {
-
     const int(&mapArray)[MAX_ROWS][MAX_COLS] = mp.getmap();
 
     playerstate p1state = STAND;
-
+    enemy enemy;  BULLET sword_;
 
     // thời gian chạy frame tấn công 
-    bool isAttack = false;
-    int frame_hit = 0;
-    Uint32 attackStart = 0;
-      Uint32 time_hit = 0;
-
-    enemy enemy;
-    BULLET sword_;
+    bool isAttack = false; int frame_hit = 0;
+    Uint32 attackStart = 0;  Uint32 time_hit = 0;
 
     // spamw vị trí của goblin 
     for (int i = 0; i < 37; i++) {
@@ -408,335 +642,63 @@ int main(int argc, char* argv[]) {
     // biến tấn công của goblin
     Uint32 attack_goblin_time_ = 500;
 
-    const int vector_y = 1;
-
     bool right = false, left = false;
     bool checkjump = false;
     bool direcright = false, direcleft = false;
   
-
-
     // thời gian chạy frame di chuyển
-    int frame_goblin_run = 0;
-    Uint32 time_goblin_run = 0;
+    int frame_goblin_run = 0; Uint32 time_goblin_run = 0;
 
     if (!setup() || !setbackground() || !stylemap() || !p1.spriterun(render) || !at.loadattack(render) || !enemy.amination_enemy_goblin(render)
         || !inter.load_picture(render) || !sword_.animation_bullet(render) || !bigmonster.load_inmage_boss(render) || !status.load_button(render)
         || !sound.load_sound_all()||!SetCustomCursor()) {
-        cout << SDL_GetError();
-        return 1;
+        cout << SDL_GetError();  return 1;
     }
 
     int quit = 0;
     while (!quit) {
         while (SDL_PollEvent(&e) != 0) {
-            if (e.type == SDL_QUIT) {
-                quit = 1;
-                break;
-            }
-            if (!status.GO!=PAUSE) {
-                if (e.type == SDL_KEYDOWN) {
-                    switch (e.key.keysym.sym) {
-
-                    case SDLK_d:
-                        right = true;
-                        left = false;
-                        direcright = true;
-                        direcleft = false;
-                        p1.charging = false;
-                        p1.x_val = VANTOC_PLAYER_X;
-                        break;
-
-                    case SDLK_a:
-                        left = true;
-                        right = false;
-                        direcright = false;
-                        direcleft = true;
-                        p1.charging = false;
-                        p1.x_val = -VANTOC_PLAYER_X;
-                        break;
-
-                    case SDLK_w:
-                        p1.jump();
-                        p1.charging = false;
-
-                        break;
-
-                    case SDLK_SPACE:
-                        if (!p1.charging && p1.can_use_special) {
-                            p1.charge_start = SDL_GetTicks();
-                            p1.charging = true;
-                            p1.charge_frame = 0;
-                        }
-                        break;
-
-                    case SDLK_e:
-                        if (SDL_GetTicks() - p1.dashStartTime > p1.reload_dash) {
-                            if (!p1.isDashing) {
-                                p1.isDashing = true;
-                                p1.dashStartTime = SDL_GetTicks();
-                            }
-                        }
-                        break;
-                    case SDLK_ESCAPE:
-                        status.time_delay_pause = SDL_GetTicks();
-                        status.is_change_pause = true;
-                        break;
-                    }
-
-                    if (status.GO == GAME_VICTORY) {
-
-                        if (e.key.keysym.sym == SDLK_RETURN) {
-                            resetgame();
-                            status.GO = MENU;
-
-                        }
-                    }
-                }
-
-                else if (e.type == SDL_MOUSEBUTTONDOWN) {
-                    Uint32 delay_attack = SDL_GetTicks();
-                    if (e.button.button == SDL_BUTTON_LEFT && !right && !left && delay_attack - attackStart >= 400) {
-                        if (status.GO == START) {
-                            sound.check_sound_player_attack = true;
-                        }
-                        isAttack = true;
-                        attackStart = SDL_GetTicks();
-                        for (int i = 0; i < 60; i++) goblin_enemy[i].goblin_hit_yes = true;
-                    }
-                    else if (e.button.button == SDL_BUTTON_RIGHT && delay_attack - attackStart >= 600 && inter.check_eat_apple) {
-                        isAttack = true;
-                        attackStart = SDL_GetTicks();
-                        for (int i = 0; i < 60; i++) goblin_enemy[i].goblin_hit_yes = true;
-                        sound.play_attack_apple_sound();
-
-                        int check_direc = 0;
-                        if (direcleft) {
-                            check_direc = -1;
-                        }
-                        else {
-                            check_direc = 1;
-                        }
-                        bullets_sword.add_bullet(p1.player_x + 20, p1.player_y + 2, check_direc);
-                    }
-
-
-
-                    int m;
-                    int n;
-                    SDL_GetMouseState(&m, &n);
-
-                    status.mouse_x = m;
-                    status.mouse_y = n;
-
-
-                }
-
-                else if (e.type == SDL_KEYUP) {
-                    switch (e.key.keysym.sym) {
-                    case SDLK_d:
-                        right = false;
-                        if (!right) p1.x_val = 0;
-                        break;
-                    case SDLK_a:
-                        left = false;
-                        if (!left) p1.x_val = 0;
-                        break;
-                    case SDLK_SPACE:
-                        if (p1.charging) {
-                            Uint32 current_time = SDL_GetTicks();
-                            if (current_time - p1.charge_start >= p1.charge_time) {
-                                p1.using_special = true;
-                                int check_direc = 0;
-                                int x = 0;
-                                int y = 50;
-                                if (direcleft) {
-                                    check_direc = -1;
-                                    x = -10;
-                                }
-                                else {
-                                    check_direc = 1;
-                                    x = -100;
-                                }
-                                bullets_sword.add_bullet_special(p1.player_x + x, p1.player_y - y, check_direc, sound);
-                                p1.special_attack_frame = 4;
-                                p1.energy = 0;
-                                p1.can_use_special = false;
-                                cam.start_shake(10, 400);
-                                cam.start_slow_motion(600);
-                            }
-                            p1.charging = false;
-                        }
-                    }
-
-
-                    if (!left && !right) {
-                        p1state = STAND;
-                    }
-                }
-            }
+            if (e.type == SDL_QUIT) { quit = 1; break; }
+            else if (e.type == SDL_KEYDOWN) handleKey_Down(e,right,left,direcright,direcleft);
+            else if (e.type == SDL_KEYUP) handleKey_Up(e, right, left, direcright, direcleft,p1state);
+            else if (e.type == SDL_MOUSEBUTTONDOWN) handleMouse_Down(e,attackStart,isAttack,direcleft,right,left);
 
         }
 
         if (!p1.on_ground) {
             p1.y_val += 0.5;
-            if (p1.y_val > 7) {
-                p1.y_val = 7;
-            }
+            if (p1.y_val > 7) p1.y_val = 7;
         }
-        else {
-            p1.y_val = 1;
-        }
+        else  p1.y_val = 1;
 
         // thay đổi vị trí nhân vật
         p1.checkvar(mapArray);
-        p1.player_x += p1.x_val;
-        p1.player_y += p1.y_val;
+        p1.player_x += p1.x_val; p1.player_y += p1.y_val;
         cam.updateCamera(p1);
-        check_change_status();
+        checkChange_status();
 
         SDL_SetCursor(customCursor);
 
         SDL_SetRenderDrawColor(render, 255, 255, 255, 255);
         SDL_RenderClear(render);
 
-
-
         if (status.GO == MENU) {
-            sound.play_game_menu_sound();
-            status.GAME_MENU(render, game_menu,quit);
-            if (status.GO == START) {
-                sound.stop_game_menu_sound();
-                resetgame();
-                direcright = true;
-                isAttack = false;
-            }
+            handle_Menu(render, direcright, isAttack, quit);
         }
-
         else if (status.GO == HELP) {
-            status.GAME_HELP(render);
+            handle_Help(render);
         }
-
         else if (status.GO == GAME_OVER) {
-            sound.stop_game_start_sound();
-            sound.stop_run_sound();
-            Uint32 currentime = SDL_GetTicks();
-            if (currentime - p1.player_died_time > 1000) {
-                status.GAME_OVER(render, game_over_, inter.font);
-                if (status.GO == START_AGAIN) {
-                    resetgame();
-                    status.GO = START;
-                    direcright = true;
-                    isAttack = false;
-                }
-                if (status.GO == MENU) {
-                    resetgame();
-                }
-            }
+            handleGame_Over(render, direcright, isAttack);
         }
-
         else if (status.GO == GAME_VICTORY) {
-            sound.stop_game_start_sound();
-            status.GAME_VICTORY_(render, inter.font);
+            handle_Victory(render);
         }
-
         else  if (status.GO == PAUSE) {
-            background.positionimg(render, NULL);
-            mp.rendermap(render, cam);
-            for (int i = 0; i < 60; i++) {
-                goblin_enemy[i].update(mapArray);
-                goblin_enemy[i].sprite_enemy_goblin_idle_left(render, cam);
-            }
-            status.GAME_PAUSE(render);
+            handle_Pause(render, mapArray);
         }
-
         else if (status.GO == START) {
-            // nhac game ==========
-            sound.play_game_start_sound();
-            background.positionimg(render, NULL);
-            mp.rendermap(render, cam);
-            if (sound.check_sound_player_attack) {
-                sound.check_sound_player_attack = false;
-                sound.play_attack_sound();
-            }
-            // rung cam ===========
-            cam.update_shake();
-
-            // hiệu ứng ăn táo =============
-            inter.check_eat_apple_(p1);
-            if (inter.check_eat_apple) {
-                sound.play_effect_apple_sound();
-                p1.Effect_apple2_player(render, cam);
-                p1.Effect_apple_player(render, cam);
-            }
-
-            // hiệu ứng giữ nộ =============
-            sound.play_start_charge(p1.charging);
-            if (p1.charging) {
-                p1.sprite_special_attack_behind(render, cam);
-            }
-            
-            inter.render_energy2(render, p1, cam);
-            
-            p1.behavior_player(cam, render, left, right, direcleft, direcright, isAttack, at, sound, p1);
-
-            // hiệu ứng giữ nộ =============
-            if (p1.charging) {
-                p1.sprite_special_attack_front(render, cam);
-            }
-
-            // dash =============
-            p1.update_dash(direcright, direcleft, mapArray);
-            p1.render_smoke(render, cam);
-
-            
-            Uint32 goblin_frame_hit = 0;
-            for (int i = 0; i < 60; i++) {
-                if (goblin_enemy[i].goblin_dead) {
-                    handleGoblinDeath(goblin_enemy[i], render, cam);
-                    continue;
-                }
-
-                checkPlayerhit(goblin_enemy[i], p1, sound, status, isAttack, direcright, direcleft, attack_goblin_time_, time_goblin_run);
-
-                handleGoblinHit(goblin_enemy[i], render, cam, status, sound, frame_hit, goblin_frame_hit, isAttack, direcright, direcleft);
-                handleGoblinAI(goblin_enemy[i], p1, mapArray, render, cam, frame_goblin_run);
-
-            }
-
-            resuilt_game();
-            inter.render_kill_count(render, status.kill_count, status.score);
-
-
-            //boss ==================
-            bigmonster.check_boss_hit_attack(bullets_sword, p1, cam, sound, status, at);
-            bigmonster.boss_update(p1, cam, sound);
-            bigmonster.spawn_boss(render, cam, p1);
-
-            // kĩ năng chuột phải ==============
-            bullets_sword.bullets_attack(render, p1, cam);
-            bullets_sword.update_bullet(cam, goblin_enemy, p1, sound, status);
-            bullets_sword.bullet_gun_hit(render, cam, goblin_enemy);
-
-            // render giao diện màn hình nhân vật ==========
-            inter.spamw_apple(render, cam);
-            inter.position_blood_index(render, p1);
-            inter.render_energy(render, p1);
-            inter.render_button_sound(render, cam, sound, status);
-
-            // slow motion =================
-            cam.update_slow_motion();
-
-
-
-
-            SDL_RenderPresent(render);
-
-            SDL_Delay(16);
-
-            if (cam.is_slow_motion) {
-                SDL_Delay(48);
-            }
+            handleGameLoop(render, direcleft, direcright, isAttack, mapArray, attack_goblin_time_, time_goblin_run, frame_hit, frame_goblin_run,left,right);
         }
     }
 

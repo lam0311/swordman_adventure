@@ -4,8 +4,8 @@ interface::interface() {
 	health = NULL;
 	background_blood = NULL;
 	enegy_index = NULL;
-	apple_x = 18040;
-	apple_y = 290;
+	apple_x = APPLE_X;
+	apple_y = APPLE_Y;
 	status_sound = true;
 	check_eat_apple = 0;
 	font = NULL;
@@ -135,6 +135,4 @@ void interface::render_kill_count(SDL_Renderer* render, int kill,int score) {
 	SDL_FreeSurface(kill_surface);
 	SDL_DestroyTexture(score_texture);
 	SDL_DestroyTexture(kill_texture);
-
-
 }
