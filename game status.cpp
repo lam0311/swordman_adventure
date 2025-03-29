@@ -172,7 +172,6 @@ void status_game::GAME_MENU(SDL_Renderer* render, base game_menu,int &quit) {
 	SDL_RenderPresent(render);
 }
 
-
 void status_game::GAME_PAUSE(SDL_Renderer* render) {
 	// Làm tối màn hình
 	SDL_SetRenderDrawBlendMode(render, SDL_BLENDMODE_BLEND);

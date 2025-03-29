@@ -103,6 +103,7 @@ void resetgame() {
     p1.player_heath = PLAYER_MAX_HEALTH;
     p1.x_val = 0;
     p1.y_val = 0;
+    p1.energy = 0;
     p1.player_died = false;
     p1.player_hit = false;
     at.frame_hit = 0;
@@ -148,16 +149,6 @@ void resetgame() {
         goblin_enemy[i].stack_bomb.clear();
     }
     cam.resetcam();
-}
-
-void effect_apple_() {
-    inter.check_eat_apple_(p1);
-    if (inter.check_eat_apple) {
-
-        sound.play_effect_apple_sound();
-        p1.Effect_apple2_player(render, cam);
-        p1.Effect_apple_player(render, cam);
-    }
 }
 
 void resuilt_game() {

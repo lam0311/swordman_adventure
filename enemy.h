@@ -58,10 +58,10 @@ public:
 	Uint32 run_goblin_time;
 	Uint32 goblin_hit_start;
 	Uint32 goblin_frame_died;
-  
+	Uint32 attack_goblin_start;
+
 
 	state_goblin goblin;
-	Uint32 attack_goblin_start;
 	SDL_Texture* load_enemy(const char* path, SDL_Renderer* render);
 	
 	vector<BULLET> stack_bomb;

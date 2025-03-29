@@ -102,7 +102,7 @@ void enemy::checkvar2(const int tile_map[MAX_ROWS][MAX_COLS]) {
             }
             else if (knockback_val_x < 0) {
                 if ((tile_map[y1][x1] != 0 || tile_map[y2][x1] != 0)) {
-                    knockback = (x1 + 1) * tile_block;
+                    enemy_x = (x1 + 1) * tile_block;
                     knockback_val_x = 0;
                 }
             }

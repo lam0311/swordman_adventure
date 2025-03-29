@@ -4,8 +4,6 @@
 #include"player.h"
 class attack : public player {
 public:
-	vector<pair<int, int>> picture_;
-	vector<pair<int, int>> picture_2;
 	int frame_attack;
 	int frame_hit;
 	int attackFrame_trigger;

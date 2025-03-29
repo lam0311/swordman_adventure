@@ -49,6 +49,7 @@ public:
 	Uint32 time_frame_shiled;
 	Uint32 victory_start_time;
 	Uint32 stun_start_time;
+
 	vector<BULLET> boss_bullets;
 
 	BOSS() {
